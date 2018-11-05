@@ -9,7 +9,7 @@ def _format(message, **kwargs):
 
     encoded = [
         '%s=%s' % (k, json.dumps(v))
-        for k, v in kwargs.iteritems()]
+        for k, v in kwargs.items()]
     return '%s (%s)' % (message, ', '.join(encoded))
 
 

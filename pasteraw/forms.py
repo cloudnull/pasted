@@ -1,12 +1,7 @@
-import flask_wtf
+from flask_wtf import FlaskForm
 
-import wtforms
+from wtforms import TextAreaField
+from wtforms.validators import DataRequired
 
-from wtforms import validators
-
-
-class PasteForm(flask_wtf.FlaskForm):
-    content = wtforms.TextAreaField(
-        'Content',
-        validators=[
-            validators.DataRequired()])
+class PasteForm(FlaskForm):
+    content = TextAreaField('Content', validators=[DataRequired()])

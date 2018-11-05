@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+import hashlib
 
 import fcntl
 import json
@@ -51,42 +51,28 @@ def _deserialize(s):
 
 
 def throttle(request):
+    ip = hashlib.sha1(request.encode('utf-8')).hexdigest()
     if app.config['TESTING']:
         # ignore rate limiting in debug mode
         return True
 
-    # try the actual remote address passed through by nginx first
-    ip = str(request.headers.get('X-Real-IP', request.remote_addr))
-
-    rate = 3.0  # unit: messages
-    per = 60.0  # unit: seconds
+    rate = 10.0  # unit: messages
+    per = 10.0   # unit: seconds
 
     with DBMContext(app.config['RATE_LIMIT_DBM_FILE']) as db:
         db.setdefault(ip, _serialize((rate, time.time(), 0)))
-        allowance, last_check, throttle_count = _deserialize(db[ip])
-
-        if throttle_count > MAX_THROTTLES:
-            log.warning('Deny', ip=ip)
-            raise exceptions.RateLimitExceeded('Rate limit exceeded.')
+        allowance, last_check, throttle_count = _deserialize(db[ip].decode('utf8'))
 
         current = time.time()
         time_passed = current - last_check
         last_check = current
-        allowance += time_passed * (rate / per)
-
-        if allowance > rate:
-            # A lot of time has passed since we last saw this IP, reset their
-            # throttle.
-            allowance = rate
-
-        if allowance < 1.0:
-            throttle_count += 1
+        if time_passed < per and allowance < 1:
             db[ip] = _serialize((allowance, last_check, throttle_count))
-
-            retry_after = (1.0 - allowance) * (per / rate)
             log.warning('Deny', ip=ip, allowance=round(allowance, 1))
             raise exceptions.RateLimitExceeded(
-                'Rate limit exceeded. Retry after %s seconds.' % retry_after)
+                'Rate limit exceeded. Rate is [%s]. Retry after %s seconds.' % (rate, per))
+        elif time_passed > per:
+            allowance = rate
 
         allowance -= 1
         db[ip] = _serialize((allowance, last_check, throttle_count))

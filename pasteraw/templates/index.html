@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
     <form action="{{ url_for('index') }}" method="post">
+        {{ form.csrf_token }}
         <fieldset>
             <legend>Pasted <small>A paste service</small></legend>
             {{ form.content(class='input-block-level') }}

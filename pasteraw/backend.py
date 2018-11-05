@@ -56,14 +56,8 @@ def read(key):
 
 def write(content):
     """Write the content to a backend, and get a URL for it."""
-    content = content.encode('utf-8')
-    hex_key = hashlib.sha1(content).hexdigest()
-    key = base36.re_encode(hex_key, starting_base=16)
-
-    if cdn.upload(key, content):
-        log.info('Uploaded paste to CDN', key=key)
-        return remote_url(key)
-
+    key = hashlib.sha1(content.encode('utf-8')).hexdigest()
+    print(key)
     # ensure the PASTE_DIR exists
     if app.config['PASTE_DIR'] is None:
         app.config['PASTE_DIR'] = tempfile.mkdtemp(prefix='pasteraw-')
@@ -75,7 +69,6 @@ def write(content):
         log.warning(msg, paste_dir=app.config['PASTE_DIR'])
         raise IOError(msg)
 
-    # CDN failed for whatever reason; write to a local file instead.
     path = _local_path(key)
     with open(path, 'w') as f:
         f.write(content)

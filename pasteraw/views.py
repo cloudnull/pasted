@@ -10,27 +10,41 @@ from pasteraw import forms
 from pasteraw import rate_limit
 
 
+def _rate_limit(headers):
+    request = flask.request
+    headers = request.headers
+    if headers.getlist("X-Forwarded-For"):
+       ip = headers.getlist("X-Forwarded-For")[0]
+    else:
+       ip = request.remote_addr
+    rate_limit.throttle(ip)
+
+
 @app.route('/', methods=['POST', 'GET'])
 @decorators.templated()
 def index():
     form = forms.PasteForm()
     form.meta.csrf=False
     if form.validate_on_submit():
-        rate_limit.throttle(flask.request)
+        request = flask.request
+        _rate_limit(request.headers)
         url = backend.write(flask.request.form['content'])
         return flask.redirect(url)
     return dict(form=form)
 
 
-@app.route('/api/v1/pastes', methods=['POST'])
+@app.route('/pastes', methods=['POST'])
 def create_paste():
-    form = forms.PasteForm()
-    form.meta.csrf=False
-    if form.validate_on_submit():
-        rate_limit.throttle(flask.request)
-        url = backend.write(flask.request.form['content'])
+    try:
+        request = flask.request
+        content = request.json['content']
+        _rate_limit(request.headers)
+        url = backend.write(content)
+    except ValueError as exp:
+        raise exceptions.BadRequest('Missing paste content %s' % exp)
+    else:
         return flask.redirect(url)
-    raise exceptions.BadRequest('Missing paste content')
+ 
 
 
 @app.route('/<paste_id>')
