@@ -1,9 +1,11 @@
-import flask.ext.wtf
+import flask_wtf
+
 import wtforms
+
 from wtforms import validators
 
 
-class PasteForm(flask.ext.wtf.Form):
+class PasteForm(flask_wtf.FlaskForm):
     content = wtforms.TextAreaField(
         'Content',
         validators=[

@@ -13,7 +13,8 @@ from pasteraw import rate_limit
 @app.route('/', methods=['POST', 'GET'])
 @decorators.templated()
 def index():
-    form = forms.PasteForm(csrf_enabled=False)
+    form = forms.PasteForm()
+    form.meta.csrf=False
     if form.validate_on_submit():
         rate_limit.throttle(flask.request)
         url = backend.write(flask.request.form['content'])
@@ -23,7 +24,8 @@ def index():
 
 @app.route('/api/v1/pastes', methods=['POST'])
 def create_paste():
-    form = forms.PasteForm(csrf_enabled=False)
+    form = forms.PasteForm()
+    form.meta.csrf=False
     if form.validate_on_submit():
         rate_limit.throttle(flask.request)
         url = backend.write(flask.request.form['content'])

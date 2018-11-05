@@ -2,7 +2,7 @@
 {% block body %}
     <form action="{{ url_for('index') }}" method="post">
         <fieldset>
-            <legend>pasteraw <small>a plaintext pastebin service</small></legend>
+            <legend>Pasted <small>A paste service</small></legend>
             {{ form.content(class='input-block-level') }}
             {% if form.content.errors %}
                 {% for error in form.content.errors %}
@@ -12,9 +12,10 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary" style="float: right;">Paste <i class="icon-chevron-right icon-white"></i></button>
-                <pre class="text-left muted" style="display: inline-block; border: none; margin: 0; padding: 0;"><code><span class="muted">$</span> pip install <a href="https://pypi.python.org/pypi/pasteraw">pasteraw</a>; echo "Lorem ipsum." | pasteraw
-<a href="http://cdn.pasteraw.com/9lvwkwgrgji5gbhjygxgaqcfx3hefpb">http://cdn.pasteraw.com/9lvwkwgrgji5gbhjygxgaqcfx3hefpb</a></code></pre>
+                <pre class="text-left muted" style="display: inline-block; border: none; margin: 0; padding: 0;"><code><span class="muted">$</span> pip install <a href="https://pypi.python.org/pypi/pasted">pasted</a>; echo "Lorem ipsum." | pasted
+<a href="https://cdn.pasted.tech/d363e6857bb08ddc400611a5308996aa64982551">https://cdn.pasted.tech/d363e6857bb08ddc400611a5308996aa64982551</a></code></pre>
             </div>
         </fieldset>
     </form>
 {% endblock %}
+

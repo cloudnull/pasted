@@ -11,6 +11,5 @@ setuptools.setup(
     test_suite='tests',
     install_requires=[
         'flask',
-        'pyrax',
         'flask-wtf',
         'blinker'])

@@ -1,11 +1,11 @@
-========
-pasteraw
-========
+======
+Pasted
+======
 
-A plaintext pastebin service.
+A paste service.
 
 Client
 ------
 
-A `Python package <https://github.com/dolph/pasteraw-client>`_ is available
+A `Python package <https://github.com/cloudnull/pasted-client>`_ is available
 which provides both a CLI a Python library interface.
