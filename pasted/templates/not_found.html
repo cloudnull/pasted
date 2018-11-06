@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block title %}Paste Not Found{% endblock %}
+{% block paste_body_content %}
+{% set url_home = url_for('index') %}
+<div class="alert-error">
+    <h2>What you're looking for can not be found.</h2>
+</div>
+<hr/>
+<input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
+{% endblock %}

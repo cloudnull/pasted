@@ -1,4 +1,4 @@
-import pasteraw
+import pasted
 
 
-pasteraw.app.run(host='0.0.0.0', debug=True)
+pasted.app.run(host='0.0.0.0', debug=True)

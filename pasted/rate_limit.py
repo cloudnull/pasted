@@ -9,9 +9,9 @@ try:
 except ImportError:
     import dbm
 
-from pasteraw import app
-from pasteraw import exceptions
-from pasteraw import log
+from pasted import app
+from pasted import exceptions
+from pasted import log
 
 
 MAX_THROTTLES = 3

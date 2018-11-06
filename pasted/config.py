@@ -1,7 +1,7 @@
 import uuid
 
 
-CDN_ENDPOINT = 'http://cdn.pasted.tech'
+CDN_ENDPOINT = 'http://pasted.tech:5000'
 
 PASTE_DIR = '/tmp/pasted'
 LOG_FILE = '/tmp/pasted.log'
@@ -15,4 +15,3 @@ CLOUD_REGION = None
 RACKSPACE_USERNAME = None
 RACKSPACE_API_KEY = None
 CDN_CONTAINER_NAME = 'pasted'
-

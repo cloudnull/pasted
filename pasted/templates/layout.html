@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+{% include 'header.html' %}
+    <body>
+        <main>
+            <header>
+                <legend class="container">Pasted <small>A searchable paste service for humans</small></legend>
+            </header>
+
+            <div class="container">
+{%   with messages = get_flashed_messages(with_categories=true) %}
+{%     if messages %}
+                <ul class="flashes">
+{%       for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+{%       endfor %}
+                </ul>
+{%     endif %}
+{%   endwith %}
+
+{% block paste_body_content %}
+{% endblock %}
+            </div>
+        </main>
+{% include 'footer.html' %}
+    </body>
+</html>

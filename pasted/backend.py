@@ -4,10 +4,10 @@ import tempfile
 
 import flask
 
-from pasteraw import app
-from pasteraw import base36
-from pasteraw import cdn
-from pasteraw import log
+from pasted import app
+from pasted import base36
+from pasted import cdn
+from pasted import log
 
 
 class InvalidKey(ValueError):
@@ -60,7 +60,7 @@ def write(content):
     print(key)
     # ensure the PASTE_DIR exists
     if app.config['PASTE_DIR'] is None:
-        app.config['PASTE_DIR'] = tempfile.mkdtemp(prefix='pasteraw-')
+        app.config['PASTE_DIR'] = tempfile.mkdtemp(prefix='pasted-')
         log.info(
             'PASTE_DIR not set; created temporary dir',
             tmp_dir=app.config['PASTE_DIR'])

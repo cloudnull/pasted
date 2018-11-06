@@ -1,6 +1,6 @@
 import json
 
-from pasteraw import app
+from pasted import app
 
 
 def _format(message, **kwargs):

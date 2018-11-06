@@ -3,18 +3,18 @@ import tempfile
 import unittest
 import uuid
 
-import pasteraw
+import pasted
 
 
 class PasterawTestCase(unittest.TestCase):
     def setUp(self):
-        pasteraw.app.config['TESTING'] = True
-        pasteraw.app.config['CSRF_ENABLED'] = False
-        pasteraw.app.config['PASTE_DIR'] = tempfile.mkdtemp()
-        self.app = pasteraw.app.test_client()
+        pasted.app.config['TESTING'] = True
+        pasted.app.config['CSRF_ENABLED'] = False
+        pasted.app.config['PASTE_DIR'] = tempfile.mkdtemp()
+        self.app = pasted.app.test_client()
 
     def tearDown(self):
-        shutil.rmtree(pasteraw.app.config['PASTE_DIR'])
+        shutil.rmtree(pasted.app.config['PASTE_DIR'])
 
     def assertRedirect(self, response, location):
         self.assertIn(response.status_code, (301, 302))

@@ -1,5 +1,5 @@
-from pasteraw import app
-from pasteraw import log
+from pasted import app
+from pasted import log
 
 
 ENABLED = False
