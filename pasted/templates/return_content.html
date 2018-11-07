@@ -6,8 +6,8 @@
   <code class="border">{{ content }}</code>
 </pre>
 
-<pre id="cp_btn" class="alert-info" type="button" onclick="copy_span()" value="Copy To Clipboard">{{ remote_url }}</pre>
-<p class="small text-muted">Click the URL to copy it into the clipboard.</p>
+
+<pre id="cp_btn" class="alert-info" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
 <hr />
 
 <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
