@@ -4,6 +4,8 @@ import tempfile
 
 import flask
 
+from flask import abort
+
 from pasted import app
 from pasted import cdn
 from pasted import log
@@ -28,9 +30,16 @@ def read(key):
     If the file is not local (for example, it was uploaded to a CDN), this will
     raise NotFound.
     """
+
+    try:
+        if len(key) != 40 or not int(key, 16):
+            abort(400)
+    except ValueError:
+        abort(400)
+
     path = _local_path(key)
     if not os.path.isfile(path):
-        raise exceptions.NotFound('Not a local file: %s' % path)
+        abort(404)
 
     with open(path, 'r') as f:
         return f.read()

@@ -22,5 +22,5 @@ class RateLimitExceeded(ApiException):
     status_code = 429
 
 
-class NotFound(Exception):
-    pass
+class NotFound(ApiException):
+    status_code = 404

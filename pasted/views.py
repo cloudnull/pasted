@@ -78,6 +78,11 @@ def handle_not_found(error):
     return flask.render_template('not_found.html'), 404
 
 
+@app.errorhandler(400)
+def handle_bad_request(error):
+    return flask.render_template('not_found.html'), 400
+
+
 @app.errorhandler(exceptions.BadRequest)
 def handle_bad_request(error):
     response = flask.jsonify(error.to_dict())
