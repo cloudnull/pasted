@@ -60,17 +60,24 @@ def create_paste():
 @app.route('/pastes/<paste_id>')
 def show_paste(paste_id):
     request = flask.request
-    return flask.render_template('return_content.html',
-                                 url=backend.local_url(paste_id),
-                                 content=backend.read(paste_id),
-                                 remote_url=request.url)
+    content = backend.read(paste_id)
+    if content:
+        return flask.render_template('return_content.html',
+                                     url=backend.local_url(paste_id),
+                                     content=content,
+                                     remote_url=request.url)
+    else:
+        return 'Paste not found', 404, {'Content-Type': 'text/plain; charset="utf-8"'}
 
 
 @app.route('/pastes/<paste_id>.raw')
 def show_paste_raw(paste_id):
     try:
         content = backend.read(paste_id)
-        return content, 200, {'Content-Type': 'text/plain; charset="utf-8"'}
+        if content:
+            return content, 200, {'Content-Type': 'text/plain; charset="utf-8"'}
+        else:
+            return 'Paste not found', 404, {'Content-Type': 'text/plain; charset="utf-8"'}
     except backend.InvalidKey:
         flask.abort(404)
     except backend.NotFound:

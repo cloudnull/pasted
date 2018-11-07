@@ -12,6 +12,7 @@ setuptools.setup(
     install_requires=[
         'flask',
         'flask-wtf',
-        'blinker'
+        'blinker',
+        'openstacksdk'
     ]
 )

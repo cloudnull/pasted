@@ -1,57 +1,62 @@
 import hashlib
 import os
-import tempfile
+import urllib.parse as urlparse
 
 import flask
 
 from flask import abort
 
+import requests
+
 from pasted import app
 from pasted import cdn
 from pasted import log
-from pasted import exceptions
-
-
-def _local_path(key):
-    return os.path.expanduser('%s/%s' % (app.config['PASTE_DIR'], key))
 
 
 def local_url(key):
+    """Retuns a local URL.
+
+    :param key: index item.
+    :type key: str
+    """
     return flask.url_for('show_paste', paste_id=key)
 
 
 def remote_url(key):
-    return '%s/%s' % (app.config['CDN_ENDPOINT'], key)
+    """Retuns a remote URL.
+
+    The remote ley and CDN_ENDPOINT configuration item will be combined to
+    return a remote URL.
+
+    :param key: index item.
+    :type key: str
+    """
+    return urlparse.urljoin(app.config['CDN_ENDPOINT'], key)
 
 
 def read(key):
-    """Read the content from the local system.
+    """Read the content from the CDN.
 
-    If the file is not local (for example, it was uploaded to a CDN), this will
-    raise NotFound.
+    :param key: index item.
+    :type key: str
     """
-
-    try:
-        if len(key) != 40 or not int(key, 16):
-            abort(400)
-    except ValueError:
-        abort(400)
-
-    path = _local_path(key)
-    if not os.path.isfile(path):
-        abort(404)
-
-    with open(path, 'r') as f:
-        return f.read()
+    r = requests.get(remote_url(key))
+    if r.status_code == requests.codes.ok:
+        log.info('Retrieved paste from CDN', key=key)
+        return r'{}'.format(r.text)
 
 
 def write(content):
-    """Write the content to a backend, and get a URL for it."""
+    """Write the content to a backend, and get a URL for it.
+
+    :param content: data.
+    :type content: str
+    :returns: str
+    """
     key = hashlib.sha1(content.encode('utf-8')).hexdigest()
+    if read(key):
+        return local_url(key=key)
 
-    path = _local_path(key)
-    with open(path, 'w') as f:
-        f.write(content)
-
-    log.info('Wrote paste to local filesystem', key=key)
-    return local_url(key)
+    cdn.upload(key=key, content=content.encode('utf-8'))
+    log.info('Wrote paste to CDN', key=key)
+    return local_url(key=key)
