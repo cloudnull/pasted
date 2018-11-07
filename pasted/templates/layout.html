@@ -2,12 +2,11 @@
 <html>
 {% include 'header.html' %}
     <body>
-        <main>
+        <main id="site-main" class="site-main outer" role="main">
             <header>
-                <legend class="container"><a class="text-info" style="text-decoration: none;" href="{{ url_for('index') }}">Pasted</a> <small>A searchable paste service for humans</small></legend>
+                <legend class="pasted-container legend"><a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted</a> <span class="small text-muted">searchable paste service for humans</span></legend>
             </header>
-
-            <div class="container">
+            <div class="pasted-container">
 {%   with messages = get_flashed_messages(with_categories=true) %}
 {%     if messages %}
                 <ul class="flashes">

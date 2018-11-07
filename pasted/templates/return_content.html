@@ -3,22 +3,22 @@
 {% block paste_body_content %}
 {%   set url_home = url_for('index') %}
 <pre>
-  <code>{{ content }}</code>
+  <code class="border">{{ content }}</code>
 </pre>
 
-<span id="pasteURL" class="alert-info alert-block btn-mini" style="display: block; font-family: monospace;">{{ remote_url }}
-  <input id="cp_btn" class="btn-info btn-mini" style="float: right;" type="button" onclick="copyClipboard()" value="&#x270d;&#xfe0f; Copy To Clipboard" />
-</span>
+<pre id="cp_btn" class="alert-info" type="button" onclick="copy_span()" value="Copy To Clipboard">{{ remote_url }}</pre>
+<p class="small text-muted">Click the URL to copy it into the clipboard.</p>
+<hr />
 
-<hr/>
 <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
+
 <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
 
 <script>
 // Adding event listener whern the "copy to clipboard button is pressed"
 document.getElementById("cp_btn").addEventListener("click", copy_span);
 function copy_span() {
-    var copyText = document.getElementById("pasteURL");
+    var copyText = document.getElementById("cp_btn");
     var textArea = document.createElement("textarea");
     textArea.value = copyText.textContent;
     document.body.appendChild(textArea);

@@ -24,7 +24,6 @@ def _rate_limit(request):
 @decorators.templated()
 def index():
     form = forms.PasteForm()
-    form.meta.csrf=False
     if form.validate_on_submit():
         request = flask.request
         _rate_limit(request)
