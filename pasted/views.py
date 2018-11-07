@@ -32,13 +32,17 @@ def index():
         return flask.render_template('return_content.html',
                                      url=url,
                                      content=content,
-                                     remote_url=urlparse.urljoin(request.url, url))
+                                     remote_url=urlparse.urljoin(
+                                         request.url,
+                                         url)
+                                     )
     return dict(form=form)
 
 
 @app.route('/api/search')
 def search():
     return flask.render_template('not_found.html'), 501
+
 
 @app.route('/api/pastes', methods=['POST'])
 def create_paste():

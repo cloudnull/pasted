@@ -11,5 +11,7 @@ RACKSPACE_USERNAME = None
 RACKSPACE_API_KEY = None
 CDN_CONTAINER_NAME = 'pasted'
 
+GOOGLE_ANALYTICS = 'UA-128874436-1'
+
 # if you don't override the secret key, one will be chosen for you
 SECRET_KEY = uuid.uuid4().hex
