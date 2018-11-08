@@ -67,7 +67,7 @@ def show_paste(paste_id):
                                      content=content,
                                      remote_url=request.url)
     else:
-        return 'Paste not found', 404, {'Content-Type': 'text/plain; charset="utf-8"'}
+        flask.abort(404)
 
 
 @app.route('/pastes/<paste_id>.raw')
@@ -77,10 +77,10 @@ def show_paste_raw(paste_id):
         if content:
             return content, 200, {'Content-Type': 'text/plain; charset="utf-8"'}
         else:
-            return 'Paste not found', 404, {'Content-Type': 'text/plain; charset="utf-8"'}
-    except backend.InvalidKey:
+            raise exceptions.NotFound
+    except exceptions.InvalidKey:
         flask.abort(404)
-    except backend.NotFound:
+    except exceptions.NotFound:
         flask.abort(404)
 
 

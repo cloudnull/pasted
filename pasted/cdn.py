@@ -57,10 +57,9 @@ class OpenStack(object):
             'interface': app.config['OS_INTERFACE']
         }
         self.verify = self.os_auth_args['insecure'] is False
-        for k, v in self.os_auth_args.items():
-            if v is None:
-                self.os_auth_args.pop(k)
-
+        self.os_auth_args = {
+            k: v for k, v in self.os_auth_args.items() if v is not None
+        }
     @property
     def conn(self):
         """Return an OpenStackSDK connection.

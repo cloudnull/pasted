@@ -1,2 +1,2 @@
-recursive-include pasteraw/templates *
-recursive-include pasteraw/static *
+recursive-include pasted/templates *
+recursive-include pasted/static *
