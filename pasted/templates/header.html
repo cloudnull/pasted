@@ -1,4 +1,5 @@
 <head>
+    {% set canonical_url = remote_url | default(url_home) | default('https://pasted.tech/') %}
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -14,20 +15,20 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Pasted" />
     <meta property="og:description" content="paste service for humans" />
-    <meta property="og:url" content="https://pasted.tech/" />
+    <meta property="og:url" content="{{ canonical_url }}" />
     <meta property="og:image:width" content="1800" />
     <meta property="og:image:height" content="1200" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Pasted" />
     <meta name="twitter:description" content="paste service for humans" />
-    <meta name="twitter:url" content="https://pasted.tech/" />
+    <meta name="twitter:url" content="{{ canonical_url }}" />
     <meta name="twitter:site" content="@cloudnull" />
 
     <title>Pasted</title>
 
     <link rel="shortcut icon" href="/favicon.ico" type="image/ico" />
-    <link rel="canonical" href="https://pasted.tech/" />
+    <link rel="canonical" href="{{ canonical_url }}" />
 
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/pasted.css') }}" rel="stylesheet" media="screen">
