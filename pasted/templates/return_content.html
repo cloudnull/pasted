@@ -21,8 +21,6 @@
 <div class="m-auto">
   <input class="btn btn-primary btn-sm" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
   <input class="btn btn-primary btn-sm" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
-  <br />
-  <br />
 </div>
 
 <script>
@@ -39,16 +37,6 @@ function copy_span() {
 }
 </script>
 
-<div class="text-center">
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-format="autorelaxed"
-        data-ad-client="ca-pub-5448276988475897"
-        data-ad-slot="9434609574"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+{% include 'ads.html' %}
 
 {% endblock %}
