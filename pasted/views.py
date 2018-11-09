@@ -26,12 +26,14 @@ def index():
         else:
             flask.flash('Paste found', 'primary')
 
+        raw_request_url = urlparse.urljoin(request.url, url) + '.raw'
         response = flask.make_response(
             flask.render_template(
                 'return_content.html',
                 url=url,
                 content=content,
-                remote_url=urlparse.urljoin(request.url, url)
+                remote_url=urlparse.urljoin(request.url, url),
+                paste_url=raw_request_url
             )
         )
         response.headers['X-XSS-Protection'] = '0'
@@ -65,10 +67,19 @@ def show_paste(paste_id):
     request = flask.request
     content = backend.read(paste_id)
     if content:
-        return flask.render_template('return_content.html',
-                                     url=backend.local_url(paste_id),
-                                     content=content,
-                                     remote_url=request.url)
+        response = flask.make_response(
+            flask.render_template(
+                'return_content.html',
+                url=backend.local_url(paste_id),
+                content=content,
+                remote_url=request.url,
+                paste_url=request.url + '.raw'
+            )
+        )
+        response.headers['X-XSS-Protection'] = '1'
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        return response
+
     else:
         flask.abort(404)
 
