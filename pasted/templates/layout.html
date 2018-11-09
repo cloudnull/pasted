@@ -7,16 +7,6 @@
                 <legend class="pasted-container legend"><a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted</a> <span class="small text-muted">paste services for humans</span></legend>
             </header>
             <div class="pasted-container">
-{%   with messages = get_flashed_messages(with_categories=true) %}
-{%     if messages %}
-                <ul class="flashes">
-{%       for category, message in messages %}
-                    <li class="flash {{ category }}">{{ message }}</li>
-{%       endfor %}
-                </ul>
-{%     endif %}
-{%   endwith %}
-
 {% block paste_body_content %}
 {% endblock %}
             </div>

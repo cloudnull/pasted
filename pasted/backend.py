@@ -55,8 +55,8 @@ def write(content):
     """
     key = hashlib.sha1(content.encode('utf-8')).hexdigest()
     if read(key):
-        return local_url(key=key)
+        return local_url(key=key), False
 
     cdn.upload(key=key, content=content.encode('utf-8'))
     log.info('Wrote paste to CDN', key=key)
-    return local_url(key=key)
+    return local_url(key=key), True

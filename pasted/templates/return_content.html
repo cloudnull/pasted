@@ -6,13 +6,24 @@
   <code class="border">{{ content }}</code>
 </pre>
 
+{%   with messages = get_flashed_messages(with_categories=true) %}
+{%     if messages %}
+{%       for category, message in messages %}
+<pre id="cp_btn" class="alert alert-{{ category }}" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="{{ message }}">{{ remote_url }}</pre>
+{%       endfor %}
+{%     else %}
+<pre id="cp_btn" class="alert alert-dark" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
+{%     endif %}
+{%   endwith %}
+
 <hr />
 
-<pre id="cp_btn" class="alert-info" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
-
-<input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
-
-<input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
+<div class="m-auto">
+  <input class="btn btn-primary btn-sm" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
+  <input class="btn btn-primary btn-sm" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
+  <br />
+  <br />
+</div>
 
 <script>
 // Adding event listener whern the "copy to clipboard button is pressed"
@@ -27,4 +38,17 @@ function copy_span() {
     textArea.remove();
 }
 </script>
+
+<div class="text-center">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-format="autorelaxed"
+        data-ad-client="ca-pub-5448276988475897"
+        data-ad-slot="9434609574"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+
 {% endblock %}

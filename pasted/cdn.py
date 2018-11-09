@@ -60,6 +60,7 @@ class OpenStack(object):
         self.os_auth_args = {
             k: v for k, v in self.os_auth_args.items() if v is not None
         }
+
     @property
     def conn(self):
         """Return an OpenStackSDK connection.
@@ -90,4 +91,4 @@ def upload(key, content):
     if app.config['CDN_PROVIDER'] == 'openstack':
         cdn_provider = OpenStack()
         return cdn_provider.object_upload(key=key,
-                                          content=content)
+                                          content=content).etag
