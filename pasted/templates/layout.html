@@ -4,7 +4,10 @@
     <body>
         <main id="site-main" class="site-main outer" role="main">
             <header>
-                <legend class="pasted-container legend"><a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted</a> <span class="small text-muted">paste services for humans</span></legend>
+                <legend class="pasted-container legend">
+                    <a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted </a>
+                    <span class="small text-muted">paste services for humans</span>
+                </legend>
             </header>
             <div class="pasted-container">
 {% block paste_body_content %}

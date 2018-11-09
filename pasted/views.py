@@ -78,7 +78,8 @@ def show_paste_raw(paste_id):
     try:
         content = backend.read(paste_id)
         if content:
-            return content, 200, {'Content-Type': 'text/plain; charset="utf-8"'}
+            return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
+            return content, 200, return_headers
         else:
             raise exceptions.NotFound
     except exceptions.InvalidKey:
@@ -130,4 +131,5 @@ def favicon():
     return flask.send_from_directory(
         os.path.join(app.root_path, 'static'),
         'favicon.ico',
-        mimetype='image/x-icon')
+        mimetype='image/x-icon'
+    )
