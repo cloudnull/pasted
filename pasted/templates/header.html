@@ -1,5 +1,5 @@
 <head>
-    {% set canonical_url = paste_url | defaul(remote_url) | default(url_home) | default('https://pasted.tech/') %}
+    {% set canonical_url = paste_url | default(remote_url) | default(url_home) | default('https://pasted.tech/') %}
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
