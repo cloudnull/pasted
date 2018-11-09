@@ -11,20 +11,21 @@ from pasted import forms
 from pasted import rate_limit
 
 
-@app.route('/index')
 @app.route('/pastes', methods=['POST', 'GET'])
 @decorators.templated()
 def index():
     form = forms.PasteForm()
+    request = flask.request
     if form.validate_on_submit():
-        request = flask.request
         content = request.form['content']
         url, created = backend.write(content)
 
         if created:
             flask.flash('Paste created', 'success')
+            status = 201
         else:
             flask.flash('Paste found', 'primary')
+            status = 200
 
         raw_request_url = urlparse.urljoin(request.url, url) + '.raw'
         response = flask.make_response(
@@ -33,16 +34,16 @@ def index():
                 url=url,
                 content=content,
                 remote_url=urlparse.urljoin(request.url, url),
-                paste_url=raw_request_url
-            )
+                paste_url=raw_request_url,
+                form=form
+            ),
+            status
         )
         response.headers['X-XSS-Protection'] = '0'
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         return response
-
-
-
-    return dict(form=form)
+    else:
+        return flask.render_template('index.html', form=form)
 
 
 @app.route('/api/search')
@@ -56,10 +57,11 @@ def create_paste():
     try:
         content = request.json['content']
         url, _ = backend.write(content)
-    except ValueError as e:
-        raise exceptions.BadRequest('Missing paste content. Error [ %s ]' % e)
+    except ValueError:
+        raise exceptions.BadRequest('Missing paste content.')
     else:
-        return urlparse.urljoin(request.url, url) + '.raw'
+        return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
+        return urlparse.urljoin(request.url, url) + '.raw', 201, return_headers
 
 
 @app.route('/pastes/<paste_id>')
@@ -76,7 +78,6 @@ def show_paste(paste_id):
                 paste_url=request.url + '.raw'
             )
         )
-        response.headers['X-XSS-Protection'] = '1'
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         return response
 
@@ -113,7 +114,7 @@ def handle_bad_request(error):
 
 @app.errorhandler(400)
 def handle_bad_request(error):
-    flask.flash('Paste search failed', 'warning')
+    flask.flash('Paste failed', 'warning')
     return flask.render_template('not_found.html'), 400
 
 

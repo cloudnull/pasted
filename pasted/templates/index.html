@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block paste_body_content %}
-        <form action="{{ url_for('index') }}" method="post">
+        <form action="{{ url_for('index') }}" method="post" novalidate>
             {{ form.csrf_token }}
             <fieldset>
                 {{ form.content(class='pastes-input-box') }}
