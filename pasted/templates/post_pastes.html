@@ -3,15 +3,16 @@
 {% block body_content %}
         <form action="{{ url_for('pastes_index') }}" method="post" novalidate>
             {{ form.csrf_token }}
-            <fieldset>
-                {{ form.content(class='pastes-input-box') }}
+            {{ form.content(class='pastes-input-box') }}
+            <hr />
+            <button type="submit" class="btn btn-primary btn-lg" style="float: right;">Paste <span class="oi oi-chevron-right"></span></button>
 {%   if form.content.errors %}
 {%     for error in form.content.errors %}
-                <span class="help-block">{{ error }}</span>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+            <strong>{{ error }}</strong>
+        </div>
 {%     endfor %}
 {%   endif %}
-                <hr />
-                <button type="submit" class="btn btn-primary btn-lg" style="float: right;">Paste <span class="oi oi-chevron-right"></span></button>
-            </fieldset>
         </form>
 {% endblock %}
