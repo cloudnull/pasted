@@ -8,23 +8,63 @@ from pasted import backend
 from pasted import decorators
 from pasted import exceptions
 from pasted import forms
-from pasted import rate_limit
+
+
+CACHE_HEADERS = {
+    'X-Frame-Options': 'SAMEORIGIN',
+    "Cache-Control": 'public, max-age=0',
+    "Pragma": "no-cache",
+    "Expires": "0"
+}
+
+
+def _add_headers(headers_obj):
+    for key, value in CACHE_HEADERS.items():
+        headers_obj[key] = value
+    return headers_obj
+
 
 
 @app.route('/')
 @decorators.templated()
 def index():
-    return flask.render_template('index.html')
+    request = flask.request
+    urlform = forms.UrlForm()
+    pasteform = forms.PasteForm()
+    if urlform.validate_on_submit():
+        content = request.form['content']
+        key, pasted_id, created = backend.write(content, backend='show_link', truncate=16)
+        if created:
+            flask.flash('Link created', 'success')
+            status = 201
+        else:
+            flask.flash('Link found', 'primary')
+            status = 200
+
+        return flask.render_template('index.html', urlform=urlform), status
+    elif pasteform.validate_on_submit():
+        content = request.form['content']
+        _, url, created = backend.write(content, backend='show_paste')
+
+        if created:
+            flask.flash('Paste created', 'success')
+            status = 201
+        else:
+            flask.flash('Paste found', 'primary')
+            status = 200
+        return flask.render_template('index.html', pasteform=pasteform), status
+
+    return flask.render_template('index.html', urlform=urlform, pasteform=pasteform)
 
 
 @app.route('/pastes', methods=['POST', 'GET'])
 @decorators.templated()
 def pastes_index():
-    form = forms.PasteForm()
     request = flask.request
-    if form.validate_on_submit():
+    pasteform = forms.PasteForm()
+    if pasteform.validate_on_submit():
         content = request.form['content']
-        url, created = backend.write(content, backend='show_paste')
+        _, url, created = backend.write(content, backend='show_paste')
 
         if created:
             flask.flash('Paste created', 'success')
@@ -41,15 +81,15 @@ def pastes_index():
                 content=content,
                 remote_url=urlparse.urljoin(request.url, url),
                 paste_url=raw_request_url,
-                form=form
+                form=pasteform
             ),
             status
         )
         response.headers['X-XSS-Protection'] = '0'
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers = _add_headers(response.headers)
         return response
     else:
-        return flask.render_template('post_pastes.html', form=form)
+        return flask.render_template('post_pastes.html', pasteform=pasteform)
 
 
 @app.route('/api/search')
@@ -62,11 +102,12 @@ def create_paste():
     request = flask.request
     try:
         content = request.json['content']
-        url, _ = backend.write(content)
+        _, url, _ = backend.write(content, backend='show_paste')
     except ValueError:
         raise exceptions.BadRequest('Missing paste content.')
     else:
         return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
+        return_headers.update(CACHE_HEADERS)
         return urlparse.urljoin(request.url, url) + '.raw', 201, return_headers
 
 
@@ -83,7 +124,7 @@ def show_paste(pasted_id):
                 remote_url=request.url,
             )
         )
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers = _add_headers(response.headers)
         return response
 
     else:
@@ -107,12 +148,12 @@ def show_paste_raw(pasted_id):
 
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
-def links_index():
-    form = forms.UrlForm()
+def links_index(request=None):
     request = flask.request
-    if form.validate_on_submit():
+    urlform = forms.UrlForm()
+    if urlform.validate_on_submit():
         content = request.form['content']
-        url, created = backend.write(content, backend='show_link', truncate=16)
+        key, local_pasted_url, created = backend.write(content, backend='show_link', truncate=16)
         if created:
             flask.flash('Link created', 'success')
             status = 201
@@ -123,35 +164,25 @@ def links_index():
         response = flask.make_response(
             flask.render_template(
                 'return_link.html',
-                url=url,
+                go_to_remote_url=local_pasted_url,
                 content=content,
-                remote_url=urlparse.urljoin(request.url, url),
-                form=form
+                remote_url=urlparse.urljoin(
+                    request.url_root,
+                    local_pasted_url
+                ),
+                help_url=urlparse.urljoin(request.url_root, 'links/' + key),
+                form=urlform
             ),
             status
         )
         response.headers['X-XSS-Protection'] = '0'
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
-        response.headers['Cache-Control'] = 'public, max-age=0'
+        response.headers = _add_headers(response.headers)
         return response
     else:
-        return flask.render_template('post_links.html', form=form)
+        return flask.render_template('post_links.html', urlform=urlform)
 
 
 @app.route('/links/<pasted_id>')
-def show_link(pasted_id):
-    request = flask.request
-    content = backend.read(pasted_id)
-    if content:
-        return flask.redirect(content, code=308)
-    else:
-        flask.abort(404)
-
-
-@app.route('/links/<pasted_id>.show')
 def show_link_data(pasted_id):
     request = flask.request
     content = backend.read(pasted_id)
@@ -159,18 +190,25 @@ def show_link_data(pasted_id):
         response = flask.make_response(
             flask.render_template(
                 'return_link.html',
-                url=backend.local_url(pasted_id, backend='show_link'),
-                content=request.url,
-                remote_url=content
+                go_to_remote_url='/l/{}'.format(pasted_id),
+                content=content,
+                remote_url=urlparse.urljoin(
+                    request.url_root,
+                    backend.local_url(pasted_id, backend='show_link')
+                )
             )
         )
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
-        response.headers['Cache-Control'] = 'public, max-age=0'
+        response.headers = _add_headers(response.headers)
         return response
+    else:
+        flask.abort(404)
 
+
+@app.route('/l/<pasted_id>')
+def show_link(pasted_id):
+    content = backend.read(pasted_id)
+    if content:
+        return flask.redirect(content, code=308), CACHE_HEADERS
     else:
         flask.abort(404)
 

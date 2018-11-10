@@ -1,0 +1,21 @@
+<form action="{{ url_for('links_index') }}" method="post" novalidate>
+    {{ urlform.csrf_token }}
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text text-center" id="btnGroupAddon">URL</div>
+        </div>
+        {{ urlform.content(class="form-control") }}
+        <span class="input-group-append input-group-btn">
+            <input id="content" type="submit" class="btn btn-primary" value="Shorten" style="width: 100px">
+        </span>
+    </div>
+    <small id="contentHelp" class="form-text text-muted">Enter a URL to be Shortened.</small>
+{%   if urlform.content.errors %}
+{%     for error in urlform.content.errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>{{ error }}</strong>
+    </div>
+{%     endfor %}
+{%   endif %}
+</form>

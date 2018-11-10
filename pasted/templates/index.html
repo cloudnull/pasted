@@ -3,15 +3,26 @@
 {% block body_content %}
 <div class="container">
     <div class="text-center">
-        <h4 class="display-4"><span class="text-info">Ctrl</span> the power of pastes</h4>
+        <h4 class="display-4"><span class="text-info">Ctrl</span> the <span class="text-danger">V</span>irtue of pastes</h4>
     </div>
     <div class="container">
-        <div class="card-header">
+        <div class="card-header text-center">
             <h6>Simple, Fast, User Friendly, Reliable: <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted!</span></h6>
         </div>
-        <div class="card-body">
-            <h5 class="card-title">Tools made for users, with users in mind.</h5>
-            <p class="card-text">Tell a story, brand content, and share. Pasted is a set tools with a focus on UX and an aim to make work a little easier for everyone.</p>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card-body">
+                    <h5 class="card-title">Tools made for users, with users in mind.</h5>
+                    <p class="card-text">Tell a story, brand content, and share. Pasted is a set tools with a focus on user experience and an aim to make work a little easier for everyone.</p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Quick Paste</h5>
+{%   include "form_links.html" %}
+{%   include "form_pastes.html" %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 {% include 'header.html' %}
     <body>
         <main id="site-main" class="site-main outer" role="main">
@@ -9,24 +10,28 @@
                     <span class="small text-muted">paste services for humans</span>
                 </legend>
             </header>
-            <div class="pasted-container">
+            <div class="container">
 {% block body_content %}{% endblock %}
             </div>
         </main>
+        <br />
+        <br />
+        <br />
         <nav class="navbar fixed-bottom navbar-expand-lg navbar-light bg-light">
-            <a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted | </a>
+            <strong><a class="text-info" style="text-decoration: none; max-width: 100%;" href="{{ url_for('index') }}">Pasted</a></strong>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('links_index') }}">Links</a>
+                        <a class="nav-link" href="{{ url_for('links_index') }}">URL Shorten</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('pastes_index') }}">Pastes</a>
                     </li>
                 </ul>
+                <small class="float-right">Powered by: <img src="/static/img/OpenStack-Logo-Horizontal.png" alt="OpenStack Logo" style="width: 75px;"></small>
             </div>
         </nav>
 

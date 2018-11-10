@@ -63,8 +63,8 @@ def write(content, backend, truncate=None):
         key = key[:truncate]
 
     if read(key):
-        return local_url(key=key, backend=backend), False
+        return key, local_url(key=key, backend=backend), False
 
     cdn.upload(key=key, content=content.encode('utf-8'))
     log.info('Wrote paste to CDN', key=key)
-    return local_url(key=key, backend=backend), True
+    return key, local_url(key=key, backend=backend), True
