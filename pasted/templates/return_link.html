@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body_content %}
+{%   set url_home = url_for('links_index') %}
+<pre>
+  <code class="border">{{ content }}</code>
+</pre>
+
+{%   include 'copy_url.html' %}
+
+{% if (not '.show' in remote_url) and (not '.show' in content) %}
+<p>This page can be revisited here: <span class="text-info">{{ remote_url + '.show' }}</span></p>
+{% endif %}
+
+<hr />
+
+<div class="m-auto">
+    <input class="btn btn-primary btn-sm" style="float: right;" type="button" onclick="location.href='{{ remote_url }}';" value="Go to Link" />
+    <input class="btn btn-primary btn-sm" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
+</div>
+
+{%   include 'ads.html' %}
+
+{% endblock %}

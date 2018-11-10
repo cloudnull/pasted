@@ -13,13 +13,16 @@ from pasted import cdn
 from pasted import log
 
 
-def local_url(key):
+def local_url(key, backend):
     """Retuns a local URL.
 
     :param key: index item.
     :type key: str
+    :param backend: function name.
+    :type backend: str
+    :returns: str
     """
-    return flask.url_for('show_paste', paste_id=key)
+    return flask.url_for(backend, pasted_id=key)
 
 
 def remote_url(key):
@@ -46,17 +49,22 @@ def read(key):
         return r'{}'.format(r.text)
 
 
-def write(content):
+def write(content, backend, truncate=None):
     """Write the content to a backend, and get a URL for it.
 
     :param content: data.
     :type content: str
+    :param truncate: number of charactors to slice from the key.
+    :type truncate: int
     :returns: str
     """
     key = hashlib.sha1(content.encode('utf-8')).hexdigest()
+    if truncate:
+        key = key[:truncate]
+
     if read(key):
-        return local_url(key=key), False
+        return local_url(key=key, backend=backend), False
 
     cdn.upload(key=key, content=content.encode('utf-8'))
     log.info('Wrote paste to CDN', key=key)
-    return local_url(key=key), True
+    return local_url(key=key, backend=backend), True

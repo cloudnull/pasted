@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
 
-from wtforms import TextAreaField
+import wtforms
+
 from wtforms.validators import DataRequired
+from wtforms.validators import URL
 
 
 class ImageForm(FlaskForm):
@@ -9,7 +11,7 @@ class ImageForm(FlaskForm):
 
 
 class PasteForm(FlaskForm):
-    content = TextAreaField('Content', validators=[DataRequired()])
+    content = wtforms.TextAreaField('Content', validators=[DataRequired()])
 
 
 class SearchForm(FlaskForm):
@@ -17,4 +19,4 @@ class SearchForm(FlaskForm):
 
 
 class UrlForm(FlaskForm):
-    pass
+    content = wtforms.StringField('Url', validators=[DataRequired(), URL()])

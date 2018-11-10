@@ -1,11 +1,3 @@
-{% extends "layout.html" %}
-
-{% block paste_body_content %}
-{%   set url_home = url_for('index') %}
-<pre>
-  <code class="border">{{ content }}</code>
-</pre>
-
 {%   with messages = get_flashed_messages(with_categories=true) %}
 {%     if messages %}
 {%       for category, message in messages %}
@@ -15,14 +7,6 @@
 <pre id="cp_btn" class="alert alert-dark" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
 {%     endif %}
 {%   endwith %}
-
-<hr />
-
-<div class="m-auto">
-  <input class="btn btn-primary btn-sm" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
-  <input class="btn btn-primary btn-sm" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Go Home" />
-</div>
-
 <script>
 // Adding event listener whern the "copy to clipboard button is pressed"
 document.getElementById("cp_btn").addEventListener("click", copy_span);
@@ -36,7 +20,3 @@ function copy_span() {
     textArea.remove();
 }
 </script>
-
-{% include 'ads.html' %}
-
-{% endblock %}

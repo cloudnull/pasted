@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body_content %}
+        <form action="{{ url_for('links_index') }}" method="post" novalidate>
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.content(class="form-control") }}
+{%   if form.content.errors %}
+{%     for error in form.content.errors %}
+                <span class="help-block">{{ error }}</span>
+{%     endfor %}
+{%   endif %}
+            <small id="content" class="form-text text-muted">Enter a URL to be Shortened.</small>
+            </div>
+            <hr />
+            <button type="submit" class="btn btn-primary btn-lg" style="float: right;">Shorten Link <span class="oi oi-chevron-right"></span></button>
+        </form>
+
+        <p>Shortened links can be exposed by visiting the generated URL, example: <span class="text-info">{{ url_for('links_index') + '/XXXXXX.show' }}</span></p>
+
+{% endblock %}
