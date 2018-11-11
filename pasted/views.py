@@ -12,9 +12,7 @@ from pasted import forms
 
 CACHE_HEADERS = {
     'X-Frame-Options': 'SAMEORIGIN',
-    "Cache-Control": 'public, max-age=0',
-    "Pragma": "no-cache",
-    "Expires": "0"
+    "Cache-Control": 'public, max-age=120'
 }
 
 
@@ -24,37 +22,32 @@ def _add_headers(headers_obj):
     return headers_obj
 
 
-
 @app.route('/')
 @decorators.templated()
 def index():
     request = flask.request
     urlform = forms.UrlForm()
     pasteform = forms.PasteForm()
+    created = False
+    status = 200
     if urlform.validate_on_submit():
         content = request.form['content']
-        key, pasted_id, created = backend.write(content, backend='show_link', truncate=16)
-        if created:
-            flask.flash('Link created', 'success')
-            status = 201
-        else:
-            flask.flash('Link found', 'primary')
-            status = 200
-
-        return flask.render_template('index.html', urlform=urlform), status
+        _, _, created = backend.write(content, backend='show_link', truncate=16)
     elif pasteform.validate_on_submit():
         content = request.form['content']
-        _, url, created = backend.write(content, backend='show_paste')
+        _, _, created = backend.write(content, backend='show_paste')
 
-        if created:
-            flask.flash('Paste created', 'success')
-            status = 201
-        else:
-            flask.flash('Paste found', 'primary')
-            status = 200
-        return flask.render_template('index.html', pasteform=pasteform), status
+    if created:
+        flask.flash('quick paste created', 'success')
+        status = 201
+    else:
+        flask.flash('quick paste created', 'primary')
 
-    return flask.render_template('index.html', urlform=urlform, pasteform=pasteform)
+    return flask.render_template(
+        'index.html',
+        urlform=urlform,
+        pasteform=pasteform
+    ), status
 
 
 @app.route('/pastes', methods=['POST', 'GET'])
@@ -111,6 +104,24 @@ def create_paste():
         return urlparse.urljoin(request.url, url) + '.raw', 201, return_headers
 
 
+@app.route('/api/links', methods=['POST'])
+def create_paste():
+    request = flask.request
+    try:
+        content = request.json['content']
+        valid_url = urlparse.urlparse(content)
+        if valid_url.scheme and valid_url.netloc:
+            _, url, _ = backend.write(content, backend='show_link')
+        else:
+            raise exceptions.BadRequest('No valid URL provided')
+    except ValueError:
+        raise exceptions.BadRequest('Missing link content')
+    else:
+        return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
+        return_headers.update(CACHE_HEADERS)
+        return urlparse.urljoin(request.url, url), 201, return_headers
+
+
 @app.route('/pastes/<pasted_id>')
 def show_paste(pasted_id):
     request = flask.request
@@ -140,15 +151,13 @@ def show_paste_raw(pasted_id):
             return content, 200, return_headers
         else:
             raise exceptions.NotFound
-    except exceptions.InvalidKey:
-        flask.abort(404)
     except exceptions.NotFound:
         flask.abort(404)
 
 
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
-def links_index(request=None):
+def links_index():
     request = flask.request
     urlform = forms.UrlForm()
     if urlform.validate_on_submit():
@@ -215,25 +224,21 @@ def show_link(pasted_id):
 
 @app.errorhandler(404)
 def handle_not_found(error):
-    flask.flash('Paste object was not found', 'warning')
     return flask.render_template('not_found.html'), 404
 
 
 @app.errorhandler(403)
 def handle_bad_request(error):
-    flask.flash('Past submission failed', 'warning')
     return flask.render_template('not_found.html'), 403
 
 
 @app.errorhandler(400)
 def handle_bad_request(error):
-    flask.flash('Paste failed', 'warning')
     return flask.render_template('not_found.html'), 400
 
 
 @app.errorhandler(501)
 def handle_bad_request(error):
-    flask.flash('Functionality Not Implemented', 'danger')
     return flask.render_template('not_found.html'), 501
 
 
@@ -254,7 +259,10 @@ def handle_rate_limit_exceeded(error):
 @app.route('/favicon.ico')
 def favicon():
     return flask.send_from_directory(
-        os.path.join(app.root_path, 'static'),
+        os.path.join(
+            app.root_path,
+            'static'
+        ),
         'favicon.ico',
         mimetype='image/x-icon'
     )
