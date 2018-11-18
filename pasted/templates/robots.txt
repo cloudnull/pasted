@@ -1,0 +1,5 @@
+# Welcome to Pasted!
+# robots welcome;
+# API documentation can be found at "{{ url_for('show_usage_api', _external=True) }}"
+User-Agent: *
+Disallow:

@@ -95,79 +95,6 @@ def create_links():
         return return_url, 201, return_headers
 
 
-@app.route('/pastes', methods=['POST', 'GET'])
-@decorators.templated()
-def pastes_index():
-    request = flask.request
-    pasteform = forms.PasteForm()
-    if pasteform.validate_on_submit():
-        content = request.form['content']
-        _, url, created = backend.write(content, backend='show_paste')
-
-        if created:
-            flask.flash('Paste created', 'success')
-            status = 201
-        else:
-            flask.flash('Paste found', 'primary')
-            status = 200
-
-        raw_request_url = urlparse.urljoin(request.url, url) + '.raw'
-        response = flask.make_response(
-            flask.render_template(
-                'return_paste.html',
-                url=url,
-                content=content,
-                remote_url=urlparse.urljoin(request.url, url),
-                paste_url=raw_request_url,
-                form=pasteform
-            ),
-            status
-        )
-        response.headers['X-XSS-Protection'] = '0'
-        response.headers = _add_headers(response.headers)
-        return response
-    else:
-        return flask.render_template('post_pastes.html', pasteform=pasteform)
-
-
-@app.route('/pastes/<pasted_id>')
-def show_paste(pasted_id):
-    request = flask.request
-    content = backend.read(pasted_id)
-    if content:
-        response = flask.make_response(
-            flask.render_template(
-                'return_paste.html',
-                url=backend.local_url(pasted_id, backend='show_paste'),
-                content=content,
-                remote_url=request.url,
-            )
-        )
-        response.headers = _add_headers(response.headers)
-        return response
-
-    else:
-        flask.abort(404)
-
-
-@app.route('/pastes/<pasted_id>.raw')
-def show_paste_raw(pasted_id):
-    request = flask.request
-    content = backend.read(pasted_id)
-    if content:
-        return_headers = {
-            'Content-Type': 'text/plain; charset="utf-8"',
-            'Location': urlparse.urljoin(
-                request.url_root,
-                backend.local_url(pasted_id, backend='show_link')
-            )
-        }
-        return_headers.update(CACHE_HEADERS)
-        return content, 200, return_headers
-    else:
-        flask.abort(404)
-
-
 @app.route('/info/tos')
 def show_tos():
     return flask.render_template('tos.html')
@@ -258,6 +185,90 @@ def show_link(pasted_id):
         return flask.redirect(content, code=308), return_headers
     else:
         flask.abort(404)
+
+
+@app.route('/pastes', methods=['POST', 'GET'])
+@decorators.templated()
+def pastes_index():
+    request = flask.request
+    pasteform = forms.PasteForm()
+    if pasteform.validate_on_submit():
+        content = request.form['content']
+        _, url, created = backend.write(content, backend='show_paste')
+
+        if created:
+            flask.flash('Paste created', 'success')
+            status = 201
+        else:
+            flask.flash('Paste found', 'primary')
+            status = 200
+
+        raw_request_url = urlparse.urljoin(request.url, url) + '.raw'
+        response = flask.make_response(
+            flask.render_template(
+                'return_paste.html',
+                url=url,
+                content=content,
+                remote_url=urlparse.urljoin(request.url, url),
+                paste_url=raw_request_url,
+                form=pasteform
+            ),
+            status
+        )
+        response.headers['X-XSS-Protection'] = '0'
+        response.headers = _add_headers(response.headers)
+        return response
+    else:
+        return flask.render_template('post_pastes.html', pasteform=pasteform)
+
+
+@app.route('/pastes/<pasted_id>')
+def show_paste(pasted_id):
+    request = flask.request
+    content = backend.read(pasted_id)
+    if content:
+        response = flask.make_response(
+            flask.render_template(
+                'return_paste.html',
+                url=backend.local_url(pasted_id, backend='show_paste'),
+                content=content,
+                remote_url=request.url,
+            )
+        )
+        response.headers = _add_headers(response.headers)
+        return response
+
+    else:
+        flask.abort(404)
+
+
+@app.route('/pastes/<pasted_id>.raw')
+def show_paste_raw(pasted_id):
+    request = flask.request
+    content = backend.read(pasted_id)
+    if content:
+        return_headers = {
+            'Content-Type': 'text/plain; charset="utf-8"',
+            'Location': urlparse.urljoin(
+                request.url_root,
+                backend.local_url(pasted_id, backend='show_link')
+            )
+        }
+        return_headers.update(CACHE_HEADERS)
+        return content, 200, return_headers
+    else:
+        flask.abort(404)
+
+
+@app.route('/robots.txt', methods=['GET'])
+def robots():
+    response = flask.make_response(
+        flask.render_template('robots.txt'),
+        200
+    )
+    response.headers['Content-Type'] = 'text/plain; charset="utf-8"'
+    response.headers = _add_headers(response.headers)
+    return response
 
 
 @app.errorhandler(404)
