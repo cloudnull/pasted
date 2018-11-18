@@ -168,6 +168,11 @@ def show_paste_raw(pasted_id):
         flask.abort(404)
 
 
+@app.route('/info/tos')
+def show_tos():
+    return flask.render_template('tos.html')
+
+
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
 def links_index():
