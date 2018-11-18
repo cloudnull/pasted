@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block body_content %}
+<div class="container">
+    <div class="text-center">
+        <h4 class="display-4">Using the Python Client</h4>
+    </div>
+    <div class="card-body">
+        <h5 class="border-bottom card-title text-center w-100">Get a URL, go be productive.</h5>
+        <p class="card-text"><a href="https://pasted.tech">Pasted.tech</a> has a command line interface written in
+            <code>python</code>. This
+            page will cover the installation of and use of the <code>python</code> command line interface.</p>
+    </div>
+</div>
+
+<div class="row">
+
+    <!--Usage Overview Container-->
+    <div class="w-100">
+        <div class="card-body">
+            <h5 class="border-bottom card-title w-100">Typical Client Usage</h5>
+            <p class="card-text">The <code>pasted-client</code> can be used in several different ways. Here are some of
+                the more typical uses:</p>
+            <ul>
+                <li>Using <code>stdin</code> and a pipe into the client</li>
+                <li>Using the path to a given file</li>
+                <li>Using in scripts with an input stream literal</li>
+                <li>Using it directly to create original content</li>
+                <li>Using it as a library within your own <code>python</code> application</li>
+            </ul>
+        </div>
+    </div>
+    <!-- ./Usage Overview Container-->
+
+    <!--Installation Container-->
+    <div class="w-100">
+        <div class="card-body">
+            <h5 class="border-bottom card-title w-100">Installation of the <code>python</code> command line client</h5>
+            <p class="card-text">Once the CLI and Library has been installed, the <code>pasted</code> command will be
+                available to you.</p>
+            <pre><code>$ pip install --user pasted-client</code></pre>
+            <pre><code>$ which pasted
+/home/${USERNAME}/.local/bin/pasted
+</code></pre>
+            <p class="card-text">The command line interface can also be installed from source.</p>
+            <pre><code>pip install --user git+https://github.com/cloudnull/pasted-client@master</code></pre>
+            <p class="card-text">Once the client is installed, see <code>pasted --help</code> for all available
+                options.</p>
+        </div>
+    </div>
+    <!-- ./Installation Container-->
+
+    <!--CLI Container-->
+    <div class="w-100">
+        <div class="card-body">
+            <h5 class="border-bottom card-title w-100">Using the <code>python</code> command line client</h5>
+
+            <p class="card-text">Pipe the file to <code>pasted</code> and get back a URL to a raw paste of that file.</p>
+            <pre><code>$ cat somefile | pasted
+https://pasted.tech/pastes/89001a7fbbe57e6921a91b2ba166fa98e1579cd2.raw
+</code></pre>
+
+            <p class="card-text">You can also paste multiple using <code>pasted</code> with the file upload method. All
+                pastes will be created in the
+                order in which they're passed into the client.</p>
+            <pre><code>$ pasted /path/to/file1 /path/to/file2 /path/to/file3
+https://pasted.tech/pastes/294b43b2cec9919063be1a3b49e8722648424779.raw
+https://pasted.tech/pastes/3c56f1d7f112e09002627d24b82446431df5039a.raw
+https://pasted.tech/pastes/f9372ce11a7370c54135f3c708131de123caf90f.raw
+</code></pre>
+
+            <p class="card-text"><code>pasted</code> can be used in an input stream literal, "<i>here-document,
+                    here-text, heredoc, hereis, here-string,
+                    here-script</i>".</p>
+            <pre><code>$ pasted &#60;&#60;EOF
+&#62; This is a heredoc (input stream literal)
+&#62; which is very useful in scripting.
+&#62; EOF
+https://pasted.tech/pastes/346d5e8536297bdae6703d809fc7d90ae37deca7.raw
+</code></pre>
+
+            <p class="card-text">If original content needs to be created, the <code>pasted</code> command can be run
+                without any arguments. Once content is
+                created, press <kbd><kbd>ctrl</kbd> + <kbd>d</kbd></kbd> to exit the sub-shell and upload the content.</p>
+        </div>
+    </div>
+    <!-- ./CLI Container-->
+
+    <!--Library Container-->
+    <div class="w-100">
+        <div class="card-body">
+            <h5 class="border-bottom card-title w-100">Using the <code>python</code> library.</h5>
+            <pre><code>from pasted_client import pasted
+c = pasted.Client()
+url = c.create_paste('Lorem ipsum.')
+print(url)
+https://pasted.tech/pastes/d363e6857bb08ddc400611a5308996aa64982551.raw
+</code></pre>
+
+            <p class="card-text">Alternatively, if you’re using your own deployment of <a class="text-info" href="https://github.com/cloudnull/pasted"
+                    rel=nofollow>Pasted</a>, pass your own API endpoint to the
+                client:</p>
+            <pre><code>c = pasteraw.Client('http://pasted.example.tld/api/pastes')</code></pre>
+        </div>
+    </div>
+    <!-- ./Library Container-->
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 {% block title %}Paste Not Found{% endblock %}
 {% block body_content %}
-{% set url_home = url_for('index') %}
+{%   set url_home = url_for('index') %}
 
 <div class="alert alert-danger">
     <h4>Something is not quite right.</h4>
@@ -22,5 +22,5 @@
 
 <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
 
-{% include 'ads.html' %}
+{%   include 'ads.html' %}
 {% endblock %}

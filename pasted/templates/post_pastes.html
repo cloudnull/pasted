@@ -12,32 +12,33 @@
     <hr />
     <div class="container">
         <div class="card-header">
-            Pastes are available with syntax <strong class="text-dark text-uppercase">highlighting</strong> or in <strong class="text-dark text-uppercase">RAW</strong> form
+            Pastes are available with syntax <strong class="text-dark text-uppercase">highlighting</strong> or in
+            <strong class="text-dark text-uppercase">RAW</strong> form
         </div>
         <div class="col-sm-6">
             <div class="card-body">
                 <table class="table small">
-                  <tbody>
-                    <tr>
-                      <th scope="row"><span class="text-dark text-uppercase">highlighting</span></th>
-                      <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX' }}</span></td>
-                    </tr>
-                    <tr>
-                      <th scope="row"><span class="text-dark text-uppercase">raw</span></th>
-                      <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX.raw' }}</span></td>
-                    </tr>
-                  </tbody>
+                    <tbody>
+                        <tr>
+                            <th scope="row"><span class="text-dark text-uppercase">highlighting</span></th>
+                            <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX' }}</span></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><span class="text-dark text-uppercase">raw</span></th>
+                            <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX.raw' }}</span></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
-{%   if pasteform.content.errors %}
+{%     if pasteform.content.errors %}
 {%     for error in pasteform.content.errors %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
         <strong>{{ error }}</strong>
     </div>
 {%     endfor %}
-{%   endif %}
+{%     endif %}
 </form>
 {% endblock %}

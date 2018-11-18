@@ -8,15 +8,16 @@
 
 {%   include 'copy_url.html' %}
 
-{% if help_url is defined %}
+{%   if help_url is defined %}
 <p>Shortened URL insight can always be revealed at: <span class="text-info">{{ help_url }}</span></p>
-{% endif %}
+{%   endif %}
 
 <hr />
 
 <div class="m-auto">
-    <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ go_to_remote_url }}';" value="Go to Link" />
-    <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
+  <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ go_to_remote_url }}';"
+    value="Go to Link" />
+  <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
 </div>
 
 {%   include 'ads.html' %}

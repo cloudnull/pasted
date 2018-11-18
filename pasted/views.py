@@ -173,6 +173,16 @@ def show_tos():
     return flask.render_template('tos.html')
 
 
+@app.route('/info/cli_client')
+def show_usage_cli_client():
+    return flask.render_template('usage_cli.html')
+
+
+@app.route('/info/api')
+def show_usage_api():
+    return flask.render_template('usage_api.html')
+
+
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
 def links_index():

@@ -1,22 +1,24 @@
-{%   with messages = get_flashed_messages(with_categories=true) %}
-{%     if messages %}
-{%       for category, message in messages %}
-<pre id="cp_btn" class="alert alert-{{ category }}" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="{{ message }}">{{ remote_url }}</pre>
-{%       endfor %}
-{%     else %}
-<pre id="cp_btn" class="alert alert-dark" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
-{%     endif %}
-{%   endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{%   if messages %}
+{%     for category, message in messages %}
+<pre id="cp_btn" class="alert alert-{{ category }}" type="button" onclick="copy_span()" data-toggle="tooltip"
+    data-placement="bottom" title="&#x270D; Click the URL to copy it into the clipboard." value="{{ message }}">{{ remote_url }}</pre>
+{%     endfor %}
+{%   else %}
+<pre id="cp_btn" class="alert alert-dark" type="button" onclick="copy_span()" data-toggle="tooltip" data-placement="bottom"
+    title="&#x270D; Click the URL to copy it into the clipboard." value="Copy To Clipboard">{{ remote_url }}</pre>
+{%   endif %}
+{% endwith %}
 <script>
-// Adding event listener whern the "copy to clipboard button is pressed"
-document.getElementById("cp_btn").addEventListener("click", copy_span);
-function copy_span() {
-    var copyText = document.getElementById("cp_btn");
-    var textArea = document.createElement("textarea");
-    textArea.value = copyText.textContent;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand("Copy");
-    textArea.remove();
-}
+    // Adding event listener whern the "copy to clipboard button is pressed"
+    document.getElementById("cp_btn").addEventListener("click", copy_span);
+    function copy_span() {
+        var copyText = document.getElementById("cp_btn");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+    }
 </script>

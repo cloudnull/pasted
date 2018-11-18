@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body_content %}
+<!--Overview Container-->
+<div class="card w-100">
+    <div class="card-header">
+        <strong>Create raw pastes and get back to what you were doing.</strong>
+    </div>
+
+    <div class="card-body">
+        <p class="card-text">Use a pipe, upload files, create structured on-demand content. Once you've created the
+            paste, <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted</span> will return a
+            URL. Do whatever you want with the URL. Curl it, email it, whatever you need. <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted</span>
+            is the fastest way to create and share raw text.</p>
+        <pre><code>$ curl https://pasted.tech/pastes/5240833b89e775eef6430b9390c7add45188b3ff.raw
+Lorem ipsum.
+</code></pre>
+    </div>
+</div>
+<!-- ./Overview Container-->
+{% endblock %}

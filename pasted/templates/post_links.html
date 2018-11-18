@@ -2,7 +2,8 @@
 
 {% block body_content %}
 {%   include "form_links.html" %}
-    <hr />
-    <p>Shortened links can be exposed by visiting the generated URL, example: <span class="text-info">{{ url_for('links_index') + '/XXXXXX' }}</span></p>
+<hr />
+<p>Shortened links can be exposed by visiting the generated URL, example: <span class="text-info">{{
+        url_for('links_index') + '/XXXXXX' }}</span></p>
 
 {% endblock %}

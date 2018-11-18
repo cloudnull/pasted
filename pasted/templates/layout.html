@@ -37,11 +37,10 @@
                             Information
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item disabled" href="#">About</a>
-                            <a class="dropdown-item disabled" href="#">API</a>
-                            <a class="dropdown-item disabled" href="#">Python Client</a>
+                            <a class="dropdown-item disabled" href="{{ url_for('show_usage_api') }}">Using the API</a>
+                            <a class="dropdown-item" href="{{ url_for('show_usage_cli_client') }}">Using the Python Client</a>
                             <div class="dropdown-divider"></div>
-                            <a class="nav-link" href="{{ url_for('show_tos') }}">Terms of Service</a>
+                            <a class="dropdown-item" href="{{ url_for('show_tos') }}">Terms of Service</a>
                         </div>
                     </li>
                 </ul>
