@@ -38,4 +38,4 @@ def _app_setup():
 
 if not app.config.get('APP_SETUP'):
     _app_setup()
-    import pasted.views  # flake8: noqa
+    import pasted.views as views # flake8: noqa

@@ -8,7 +8,7 @@ from pasted import backend
 from pasted import decorators
 from pasted import exceptions
 from pasted import forms
-
+from pasted import log
 
 CACHE_HEADERS = {
     'X-Frame-Options': 'SAMEORIGIN',
@@ -43,11 +43,56 @@ def index():
     else:
         flask.flash('quick paste created', 'primary')
 
+    obj_count, obj_total_size = backend.count()
+    log.info('object count %s' % obj_count)
+
     return flask.render_template(
         'index.html',
         urlform=urlform,
-        pasteform=pasteform
+        pasteform=pasteform,
+        obj_count=obj_count,
+        obj_total_size=round((obj_total_size / 1024 / 1024), 3)
     ), status
+
+
+@app.route('/api/pastes', methods=['POST'])
+def create_paste():
+    request = flask.request
+    try:
+        content = request.json['content']
+        _, url, _ = backend.write(content, backend='show_paste')
+    except ValueError:
+        raise exceptions.BadRequest('Missing paste content.')
+    else:
+        return_url = urlparse.urljoin(request.url, url) + '.raw'
+        return_headers = {
+            'Content-Type': 'text/plain; charset="utf-8"',
+            'Location': return_url
+        }
+        return_headers.update(CACHE_HEADERS)
+        return return_url, 201, return_headers
+
+
+@app.route('/api/links', methods=['POST'])
+def create_links():
+    request = flask.request
+    try:
+        content = request.json['content']
+        valid_url = urlparse.urlparse(content)
+        if valid_url.scheme and valid_url.netloc:
+            _, url, _ = backend.write(content, backend='show_link')
+        else:
+            raise exceptions.BadRequest('No valid URL provided')
+    except ValueError:
+        raise exceptions.BadRequest('Missing link content')
+    else:
+        return_url = urlparse.urljoin(request.url, url) + '.raw'
+        return_headers = {
+            'Content-Type': 'text/plain; charset="utf-8"',
+            'Location': return_url
+        }
+        return_headers.update(CACHE_HEADERS)
+        return return_url, 201, return_headers
 
 
 @app.route('/pastes', methods=['POST', 'GET'])
@@ -85,43 +130,6 @@ def pastes_index():
         return flask.render_template('post_pastes.html', pasteform=pasteform)
 
 
-@app.route('/api/search')
-def search():
-    return 'API call not implemented', 501
-
-
-@app.route('/api/pastes', methods=['POST'])
-def create_paste():
-    request = flask.request
-    try:
-        content = request.json['content']
-        _, url, _ = backend.write(content, backend='show_paste')
-    except ValueError:
-        raise exceptions.BadRequest('Missing paste content.')
-    else:
-        return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
-        return_headers.update(CACHE_HEADERS)
-        return urlparse.urljoin(request.url, url) + '.raw', 201, return_headers
-
-
-@app.route('/api/links', methods=['POST'])
-def create_paste():
-    request = flask.request
-    try:
-        content = request.json['content']
-        valid_url = urlparse.urlparse(content)
-        if valid_url.scheme and valid_url.netloc:
-            _, url, _ = backend.write(content, backend='show_link')
-        else:
-            raise exceptions.BadRequest('No valid URL provided')
-    except ValueError:
-        raise exceptions.BadRequest('Missing link content')
-    else:
-        return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
-        return_headers.update(CACHE_HEADERS)
-        return urlparse.urljoin(request.url, url), 201, return_headers
-
-
 @app.route('/pastes/<pasted_id>')
 def show_paste(pasted_id):
     request = flask.request
@@ -144,14 +152,19 @@ def show_paste(pasted_id):
 
 @app.route('/pastes/<pasted_id>.raw')
 def show_paste_raw(pasted_id):
-    try:
-        content = backend.read(pasted_id)
-        if content:
-            return_headers = {'Content-Type': 'text/plain; charset="utf-8"'}
-            return content, 200, return_headers
-        else:
-            raise exceptions.NotFound
-    except exceptions.NotFound:
+    request = flask.request
+    content = backend.read(pasted_id)
+    if content:
+        return_headers = {
+            'Content-Type': 'text/plain; charset="utf-8"',
+            'Location': urlparse.urljoin(
+                request.url_root,
+                backend.local_url(pasted_id, backend='show_link')
+            )
+        }
+        return_headers.update(CACHE_HEADERS)
+        return content, 200, return_headers
+    else:
         flask.abort(404)
 
 
@@ -215,31 +228,41 @@ def show_link_data(pasted_id):
 
 @app.route('/l/<pasted_id>')
 def show_link(pasted_id):
+    request = flask.request
     content = backend.read(pasted_id)
     if content:
-        return flask.redirect(content, code=308), CACHE_HEADERS
+        return_url = urlparse.urljoin(
+            request.url_root,
+            backend.local_url(pasted_id, backend='show_link')
+        )
+        return_headers = {
+            'Referer': return_url,
+            'Referrer-Policy': 'unsafe-url'
+        }
+        return_headers.update(CACHE_HEADERS)
+        return flask.redirect(content, code=308), return_headers
     else:
         flask.abort(404)
 
 
 @app.errorhandler(404)
 def handle_not_found(error):
-    return flask.render_template('not_found.html'), 404
+    return flask.render_template('error_general.html', error=error), 404
 
 
 @app.errorhandler(403)
 def handle_bad_request(error):
-    return flask.render_template('not_found.html'), 403
+    return flask.render_template('error_general.html', error=error), 403
 
 
 @app.errorhandler(400)
 def handle_bad_request(error):
-    return flask.render_template('not_found.html'), 400
+    return flask.render_template('error_general.html', error=error), 400
 
 
 @app.errorhandler(501)
 def handle_bad_request(error):
-    return flask.render_template('not_found.html'), 501
+    return flask.render_template('error_general.html', error=error), 501
 
 
 @app.errorhandler(exceptions.BadRequest)

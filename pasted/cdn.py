@@ -4,6 +4,7 @@ import time
 from openstack import connection as os_conn
 
 from pasted import app
+from pasted import log
 
 
 def retry(ExceptionToCheck, tries=3, delay=1, backoff=1):
@@ -39,11 +40,14 @@ def retry(ExceptionToCheck, tries=3, delay=1, backoff=1):
 class OpenStack(object):
     """Class for reusable OpenStack utility methods."""
 
-    def __init__(self):
+    def __init__(self, container):
         """Initialization method for class.
-        :param os_auth_args: dict containing auth creds.
-        :type os_auth_args: dict
+
+        :param container: Name of the container to upload into.
+        :type container: str
         """
+
+        self.container = container or app.config['CDN_CONTAINER_NAME']
         self.os_auth_args = {
             'username': app.config['OS_USERNAME'],
             'password': app.config['OS_PASSWORD'],
@@ -79,16 +83,45 @@ class OpenStack(object):
         :returns: object
         """
         return self.conn.object_store.upload_object(
-            container=app.config['CDN_CONTAINER_NAME'],
+            container=self.container,
             name=key,
             data=content
-        )
+        ).etag
+
+    def object_count(self):
+        """Return the object count and size of a given container.
+
+        The returned object is (<count>, <size>)
+            Size is returned in bytes.
+
+        :returns: tuple
+        """
+        container = self.conn.get_container(name=self.container)
+        log.info('container information: %s' % container)
+        return int(container['X-Container-Object-Count']), int(container['X-Container-Bytes-Used'])
 
 
 @retry(ExceptionToCheck=Exception)
-def upload(key, content):
-    """Upload content to a CDN provider."""
+def upload(key, content, container=None):
+    """Upload content to a CDN provider.
+
+    :param key: File object name.
+    :type key: str
+    :param content: File content.
+    :type content: str or bytes
+    :returns: str
+    """
     if app.config['CDN_PROVIDER'] == 'openstack':
-        cdn_provider = OpenStack()
-        return cdn_provider.object_upload(key=key,
-                                          content=content).etag
+        cdn_provider = OpenStack(container=container)
+        return cdn_provider.object_upload(key=key, content=content)
+
+
+@retry(ExceptionToCheck=Exception)
+def count(container=None):
+    """Count uploaded content to a CDN provider.
+
+    :returns: int
+    """
+    if app.config['CDN_PROVIDER'] == 'openstack':
+        cdn_provider = OpenStack(container=container)
+        return cdn_provider.object_count()

@@ -10,6 +10,7 @@ setuptools.setup(
     zip_safe=False,
     test_suite='tests',
     install_requires=[
+        'diskcache',
         'flask',
         'flask-wtf',
         'blinker',

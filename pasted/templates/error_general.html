@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Paste Not Found{% endblock %}
+{% block body_content %}
+{% set url_home = url_for('index') %}
+
+<div class="alert alert-danger">
+    <h4>Something is not quite right.</h4>
+</div>
+
+<blockquote class="card-body">
+    <p>Error message: <samp>"{{ error }}"</samp></p>
+    <p>Rest assured, folks are aware of the error and will look into it.</p>
+    <footer class="blockquote-footer">
+        <small class="text-muted">
+            Yours truely, <cite title="Source Title">The Administrator</cite>
+        </small>
+    </footer>
+</blockquote>
+
+<hr />
+
+<input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
+
+{% include 'ads.html' %}
+{% endblock %}

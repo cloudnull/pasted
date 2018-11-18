@@ -23,7 +23,17 @@
 {%   include "form_pastes.html" %}
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="card-body border-bottom">
+                    <h5 class="card-title">Current Usage</h5>
+                    <p class="card-text text-muted">Current Number of objects: <strong>{{ obj_count }}</strong></p>
+                </div>
+                <div class="card-body text-muted">
+                    <p class="card-text text-muted">Total Size of all objects: <strong>{{ obj_total_size }}</strong> MiB</p>
+                </div>
+            </div>
         </div>
+{%   include "cli_usage.html" %}
     </div>
 </div>
 {% endblock %}
