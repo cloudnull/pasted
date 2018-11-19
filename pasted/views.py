@@ -299,7 +299,7 @@ def show_paste_raw(pasted_id):
             'Content-Type': 'text/plain; charset="utf-8"',
             'Location': urlparse.urljoin(
                 request.url_root,
-                backend.local_url(pasted_id, backend='show_link')
+                backend.local_url(pasted_id, backend='show_paste')
             )
         }
         return_headers.update(CACHE_HEADERS)
