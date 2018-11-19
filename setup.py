@@ -12,6 +12,7 @@ setuptools.setup(
     install_requires=[
         'diskcache',
         'flask',
+        'flask-selfdoc',
         'flask-wtf',
         'blinker',
         'openstacksdk'

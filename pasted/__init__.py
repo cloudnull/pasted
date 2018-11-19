@@ -4,8 +4,11 @@ import os
 
 import flask
 
+from flask_selfdoc import Autodoc
+
 
 app = flask.Flask(__name__, instance_relative_config=True)
+auto = Autodoc(app)
 
 
 def _app_setup():

@@ -1,21 +1,78 @@
 {% extends "layout.html" %}
 
-{% block body_content %}
-<!--Overview Container-->
-<div class="card w-100">
-    <div class="card-header">
-        <strong>Create raw pastes and get back to what you were doing.</strong>
-    </div>
+{% set button_color = {'GET': 'info', 'POST': 'success', 'HEAD': 'warning', 'OPTIONS': 'dark', 'DELETE': 'danger'} %}
 
+{% block body_content %}
+<div class="container">
+    <div class="text-center">
+        <h4 class="display-4">Using the API</h4>
+    </div>
     <div class="card-body">
-        <p class="card-text">Use a pipe, upload files, create structured on-demand content. Once you've created the
-            paste, <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted</span> will return a
-            URL. Do whatever you want with the URL. Curl it, email it, whatever you need. <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted</span>
-            is the fastest way to create and share raw text.</p>
-        <pre><code>$ curl https://pasted.tech/pastes/5240833b89e775eef6430b9390c7add45188b3ff.raw
-Lorem ipsum.
-</code></pre>
+        <h5 class="border-bottom card-title text-center w-100">Build applications for the pasted platform.</h5>
+        <p class="card-text"><a href="https://pasted.tech">Pasted.tech</a> provides an API allowing for
+            applications to be written for the platform.</p>
     </div>
 </div>
+
+<!--Overview Container-->
+{% for api in api_doc %}
+{% set rule_id = (('rule-' ~ api.rule) | replace('/', '_') | replace('>', '_') | replace('<', '_') | replace('.', '_')) %}
+{% set kw_arguments = {} %}
+{% set arguments = [] %}
+{% if api.args %}
+{%   for arg in api.args %}
+{%     if arg != 'None' %}
+{%       set _ = arguments.append(arg) %}
+{%       set _ = kw_arguments.__setitem__(arg, '17482b71682b914b') %}
+{%     endif %}
+{%   endfor %}
+{% endif %}
+{% set _ = kw_arguments.__setitem__('_external', True) %}
+<div class="card-body">
+    <a id="{{ rule_id }}">
+        <h5 class="border-bottom w-100">{{ api.rule }}</h5>
+    </a>
+{%   if api.docstring %}
+    <pre class="text-dark">{{ api.docstring }}</pre>
+{%   endif %}
+    <p>
+        <ul class="list-inline">
+{%   for method in api.methods %}
+{%     set rule_marker = 'Example' ~ rule_id ~ method %}
+            <li class="list-inline-item">
+                <button class="code btn btn-{{ button_color[method] }}" data-toggle="collapse" href="#{{ rule_marker }}" role="button" aria-expanded="false" aria-controls="{{ rule_marker }}">{{ method }}</button>
+            </li>
+{%   endfor %}
+        </ul>
+    </p>
+{%   for method in api.methods %}
+{%     set rule_marker = 'Example' ~ rule_id ~ method %}
+    <div class="collapse multi-collapse" id="{{ rule_marker }}">
+        <div class="card-body">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text text-dark text-center" id="btnGroupAddon">{{ method | upper }}</div>
+                </div>
+{%     set curl_command = 'curl' %}
+{%     if (method | upper) == 'HEAD' %}
+{%       set curl_command = curl_command ~ " --head" %}
+{%     elif (method | upper) == 'POST' %}
+{%       set curl_command = curl_command ~ ' -X' ~ (method | upper) ~ ' --header "Content-Type: application/json" --data \'{"content": "https://pasted.tech"}\'' %}
+{%     else %}
+{%       set curl_command = curl_command ~ ' -X' ~ (method | upper) %}
+{%     endif %}
+{%     set curl_command = curl_command ~ ' ' ~ url_for((api.endpoint | string), **kw_arguments) %}
+                <input class="form-control code text-center" placeholder="{{ curl_command }}" readonly>
+            </div>
+        </div>
+    </div>
+{%   endfor %}
+
+{%   if api.defaults %}
+    <p class="blockquote">{{ api.defaults }}</p>
+{%   endif %}
+</div>
+
+{% endfor %}
 <!-- ./Overview Container-->
 {% endblock %}
