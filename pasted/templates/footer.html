@@ -13,4 +13,20 @@
     gtag('js', new Date());
     gtag('config', '{{ config["GOOGLE_ANALYTICS"] }}');
   </script>
+
+  <script>
+    $(function(){
+        var twoToneButton = document.querySelector('.twoToneButton');
+        twoToneButton.addEventListener("click", function() {
+            twoToneButton.classList.add('running');
+            twoToneButton.innerHTML = "Working";
+          setTimeout(
+              function  (){
+                  twoToneButton.classList.remove('running');
+                  twoToneButton.setAttribute("style", "width: 200px;");
+                  twoToneButton.innerHTML = "Stalled, click to retry";
+              }, 24000);
+        }, false);
+    });
+  </script>
 </footer>

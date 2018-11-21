@@ -3,37 +3,35 @@
 {% block body_content %}
 <div class="container">
     <div class="text-center">
-        <p class="display-3"><span class="text-info">Ctrl</span> the <span class="text-danger">V</span>irtue of pastes</p>
+        <p class="display-4"><span class="text-info">Ctrl</span> the <span class="text-danger">V</span>antage of content</p>
     </div>
-    <div class="container">
-        <div class="card-header text-center">
-            <h6>Simple, Fast, User Friendly, Reliable: <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted!</span></h6>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="card-body">
-                    <h5 class="card-title">Tools made for users, with users in mind.</h5>
-                    <p class="card-text">Tell a story, brand content, and share. Pasted is a set tools with a focus on user experience and an aim to make work a little easier for everyone.</p>
-                </div>
+    <div class="card-header text-center">
+        <h6>Simple, Fast, User Friendly, Reliable: <span class="text-info" style="text-decoration: none; max-width: 100%;">Pasted!</span></h6>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card-body">
+                <h5 class="card-title">Tools made for users, with users in mind.</h5>
+                <p class="card-text">Tell a story, brand content, and share. Pasted is a set tools with a focus on user experience and an aim to make work a little easier for everyone.</p>
             </div>
-            <div class="col-sm-6">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Quick Paste</h5>
+        </div>
+        <div class="col-sm-6">
+            <div class="card-body">
+                <h5 class="card-title text-center">Quick Paste</h5>
 {%   include "form_links.html" %}
 {%   include "form_pastes.html" %}
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="card-body border-bottom">
-                    <h5 class="card-title">Current Usage</h5>
-                    <p class="card-text text-muted">Current Number of objects: <strong>{{ obj_count }}</strong></p>
-                </div>
-                <div class="card-body text-muted">
-                    <p class="card-text text-muted">Total Size of all objects: <strong>{{ obj_total_size }}</strong> MiB</p>
-                </div>
             </div>
         </div>
-{%   include "usage_tips.html" %}
+        <div class="col-sm-6">
+            <div class="card-body border-bottom">
+                <h5 class="card-title">Current Usage</h5>
+                <p class="card-text text-muted">Current Number of objects: <strong>{{ obj_count }}</strong></p>
+            </div>
+            <div class="card-body text-muted">
+                <p class="card-text text-muted">Total Size of all objects: <strong>{{ obj_total_size }}</strong> MiB</p>
+            </div>
+        </div>
     </div>
+{%   include "usage_tips.html" %}
 </div>
 {% endblock %}

@@ -1,7 +1,10 @@
 import os
+import time
 import urllib.parse as urlparse
 
 import flask
+
+import requests
 
 from pasted import app
 from pasted import auto
@@ -27,23 +30,8 @@ def _add_headers(headers_obj):
 @decorators.templated()
 def index():
     request = flask.request
-    urlform = forms.UrlForm()
-    pasteform = forms.PasteForm()
-    created = False
-    status = 200
-    if urlform.validate_on_submit():
-        content = request.form['content']
-        _, _, created = backend.write(content, backend='show_link', truncate=16)
-    elif pasteform.validate_on_submit():
-        content = request.form['content']
-        _, _, created = backend.write(content, backend='show_paste')
-
-    if created:
-        flask.flash('quick paste created', 'success')
-        status = 201
-    else:
-        flask.flash('quick paste created', 'primary')
-
+    urlform = forms.UrlForm(request.form)
+    pasteform = forms.PasteForm(request.form)
     obj_count, obj_total_size = backend.count()
     log.info('object count %s' % obj_count)
 
@@ -53,7 +41,7 @@ def index():
         pasteform=pasteform,
         obj_count=obj_count,
         obj_total_size=round((obj_total_size / 1024 / 1024), 3)
-    ), status
+    )
 
 
 @app.route('/api/pastes', methods=['POST'])
@@ -144,33 +132,22 @@ def links_index():
     request = flask.request
     urlform = forms.UrlForm()
     if urlform.validate_on_submit():
-        content = request.form['content']
-        key, local_pasted_url, created = backend.write(content, backend='show_link', truncate=16)
+        key, url, created = backend.write(urlform.content.data, backend='show_link', truncate=16)
         if created:
             flask.flash('Link created', 'success')
-            status = 201
         else:
             flask.flash('Link found', 'primary')
-            status = 200
 
         response = flask.make_response(
-            flask.render_template(
-                'return_link.html',
-                go_to_remote_url=local_pasted_url,
-                content=content,
-                remote_url=urlparse.urljoin(
-                    request.url_root,
-                    local_pasted_url
-                ),
-                help_url=urlparse.urljoin(request.url_root, 'links/' + key),
-                form=urlform
-            ),
-            status
+            flask.redirect(flask.url_for('show_link_data', pasted_id=key))
         )
         response.headers['X-XSS-Protection'] = '0'
         response.headers = _add_headers(response.headers)
         return response
     else:
+        log.warning('Form validation failed')
+        log.warning('urlform errors', error=urlform.errors)
+        flask.flash(pasteform.errors, 'danger')
         return flask.render_template('post_links.html', urlform=urlform)
 
 
@@ -231,32 +208,23 @@ def pastes_index():
     request = flask.request
     pasteform = forms.PasteForm()
     if pasteform.validate_on_submit():
-        content = request.form['content']
-        _, url, created = backend.write(content, backend='show_paste')
+        key, url, created = backend.write(pasteform.content.data, backend='show_paste')
 
         if created:
             flask.flash('Paste created', 'success')
-            status = 201
         else:
             flask.flash('Paste found', 'primary')
-            status = 200
 
-        raw_request_url = urlparse.urljoin(request.url, url) + '.raw'
         response = flask.make_response(
-            flask.render_template(
-                'return_paste.html',
-                url=url,
-                content=content,
-                remote_url=urlparse.urljoin(request.url, url),
-                paste_url=raw_request_url,
-                form=pasteform
-            ),
-            status
+            flask.redirect(flask.url_for('show_paste', pasted_id=key))
         )
         response.headers['X-XSS-Protection'] = '0'
         response.headers = _add_headers(response.headers)
         return response
     else:
+        log.warning('Form validation failed')
+        log.warning('pasteform errors', error=pasteform.errors)
+        flask.flash(pasteform.errors, 'danger')
         return flask.render_template('post_pastes.html', pasteform=pasteform)
 
 

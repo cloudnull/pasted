@@ -1,12 +1,15 @@
-<form action="{{ url_for('pastes_index') }}" method="post" novalidate>
+<form action="{{ url_for('pastes_index') }}" method="POST">
     {{ pasteform.csrf_token }}
     <div class="input-group">
         <div class="input-group-prepend">
-            <div class="input-group-text text-center" id="btnGroupAddon">TXT</div>
+            <div class="input-group-text text-center" id="btnGroupAddonPaste">TXT</div>
         </div>
         {{ pasteform.content(class="form-control") }}
         <span class="input-group-append input-group-btn">
-            <input id="content" type="submit" class="btn btn-primary" value="Paste" style="width: 100px">
+            <button id="content_paste" type="submit" class="btn btn-primary twoToneButton ld-ext-right"
+                style="width: 100px">Paste it!
+                <div class="ld ld-ring ld-spin"></div>
+            </button>
         </span>
     </div>
     <small id="contentHelp" class="form-text text-muted">Text Content to Paste.</small>

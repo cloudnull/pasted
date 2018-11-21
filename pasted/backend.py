@@ -86,10 +86,17 @@ def read(key):
     :param key: index item.
     :type key: str
     """
-    r = requests.get(remote_url(key))
-    if r.status_code == requests.codes.ok:
-        log.info('Retrieved paste from CDN', key=key)
-        return r'{}'.format(r.text)
+    with LocalCache() as c:
+        content = c.get(key)
+
+    if not content:
+        r = requests.get(remote_url(key))
+        if r.status_code == requests.codes.ok:
+            log.info('Retrieved paste from CDN', key=key)
+            return r'{}'.format(r.text)
+    else:
+        log.info('Read object from cache', key=key)
+        return content.decode("utf-8")
 
 
 def write(content, backend, truncate=None):
@@ -108,8 +115,17 @@ def write(content, backend, truncate=None):
     if read(key):
         return key, local_url(key=key, backend=backend), False
 
-    cdn.upload(key=key, content=content.encode('utf-8'))
+    encoded_content = content.encode('utf-8')
+    cdn.upload(key=key, content=encoded_content)
     log.info('Wrote paste to CDN', key=key)
+    with LocalCache() as c:
+        log.info('new object cached', key=key)
+        c.set(
+            key,
+            encoded_content,
+            expire=150
+        )
+
     return key, local_url(key=key, backend=backend), True
 
 
@@ -136,14 +152,14 @@ def count(container=None):
         if not all([object_count, total_size]):
             object_count, total_size = cdn.count(container=container)
 
-            log.info('Count object cached.')
+            log.info('Count object cached')
             c.set(
                 b'object_count',
                 object_count,
                 expire=900
             )
 
-            log.info('Size object cached.')
+            log.info('Size object cached')
             c.set(
                 b'total_size',
                 total_size,

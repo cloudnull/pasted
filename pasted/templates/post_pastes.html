@@ -1,44 +1,50 @@
 {% extends "layout.html" %}
 
 {% block body_content %}
-<form action="{{ url_for('pastes_index') }}" method="post" novalidate>
-    {{ pasteform.csrf_token }}
-    {{ pasteform.content(class='input-box pasted-input-mh w-100') }}
-    <span class="input-group-btn float-right">
-        <input id="content" type="submit" class="btn btn-primary" value="Paste">
-    </span>
-    <small id="contentHelp" class="form-text text-muted">Enter a Text.</small>
-    <br />
-    <hr />
-    <div class="container">
-        <div class="card-header">
-            Pastes are available with syntax <strong class="text-dark text-uppercase">highlighting</strong> or in
-            <strong class="text-dark text-uppercase">RAW</strong> form
-        </div>
-        <div class="col-sm-6">
-            <div class="card-body">
-                <table class="table small">
-                    <tbody>
-                        <tr>
-                            <th scope="row"><span class="text-dark text-uppercase">highlighting</span></th>
-                            <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX' }}</span></td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><span class="text-dark text-uppercase">raw</span></th>
-                            <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX.raw' }}</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+<div class="container">
+    <form action="{{ url_for('pastes_index') }}" method="POST">
+        {{ pasteform.csrf_token }}
+        {{ pasteform.content(class='input-box pasted-input-mh w-100') }}
+        <span class="input-group-btn float-right">
+            <button id="content_paste" type="submit" class="btn btn-primary twoToneButton ld-ext-right"
+                style="width: 100px">Paste
+                <div class="ld ld-ring ld-spin"></div>
+            </button>
+        </span>
+        <small id="contentHelp" class="form-text text-muted">Enter a Text.</small>
+        <br />
+        <hr />
+        <div class="container-fluid">
+            <div class="card-header">
+                Pastes are available with syntax <strong class="text-dark text-uppercase">highlighting</strong> or in
+                <strong class="text-dark text-uppercase">RAW</strong> form
+            </div>
+            <div class="col-sm-6">
+                <div class="card-body">
+                    <table class="table small">
+                        <tbody>
+                            <tr>
+                                <th scope="row"><span class="text-dark text-uppercase">highlighting</span></th>
+                                <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX' }}</span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="text-dark text-uppercase">raw</span></th>
+                                <td><span class="text-info">{{ url_for('pastes_index') + '/XXXXXX.raw' }}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-{%     if pasteform.content.errors %}
-{%     for error in pasteform.content.errors %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
-        <strong>{{ error }}</strong>
-    </div>
-{%     endfor %}
-{%     endif %}
-</form>
+    </form>
+</div>
+
+{% if pasteform.content.errors %}
+{%   for error in pasteform.content.errors %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+    <strong>{{ error }}</strong>
+</div>
+{%   endfor %}
+{% endif %}
 {% endblock %}

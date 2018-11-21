@@ -1,20 +1,21 @@
 {% extends "layout.html" %}
 
 {% block body_content %}
-{%   set url_home = url_for('pastes_index') %}
-<pre>
-  <code class="border">{{ content }}</code>
-</pre>
+<div class="container">
+  {% set url_home = url_for('pastes_index') %}
+  <pre>
+    <code class="border">{{ content }}</code>
+  </pre>
 
 {%   include 'copy_url.html' %}
 
-<hr />
+  <hr />
 
-<div class="m-auto">
-  <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
-  <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
-</div>
+  <div class="m-auto">
+    <input class="btn btn-primary" style="float: right;" type="button" onclick="location.href='{{ url }}.raw';" value="Paste RAW" />
+    <input class="btn btn-primary" style="float: left;" type="button" onclick="location.href='{{ url_home }}';" value="Return" />
+  </div>
 
 {%   include 'ads.html' %}
-
+</div>
 {% endblock %}
