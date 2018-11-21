@@ -8,17 +8,20 @@
         <span class="input-group-append input-group-btn">
             <button id="content_url" type="submit" class="btn btn-primary twoToneButton ld-ext-right"
                 style="width: 100px">Shorten
-                <div class="ld ld-ring ld-spin"></div>
             </button>
         </span>
     </div>
     <small id="contentHelp" class="form-text text-muted">Enter a URL to be Shortened.</small>
-{%   if urlform.content.errors %}
-{%     for error in urlform.content.errors %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
-        <strong>{{ error }}</strong>
-    </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{%   if messages %}
+{%     for category, message in messages %}
+{%       if message %}
+<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
+    <strong>{{ message }}</strong>
+</div>
+{%       endif %}
 {%     endfor %}
 {%   endif %}
+{% endwith %}
 </form>

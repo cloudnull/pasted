@@ -30,8 +30,8 @@ def _add_headers(headers_obj):
 @decorators.templated()
 def index():
     request = flask.request
-    urlform = forms.UrlForm(request.form)
-    pasteform = forms.PasteForm(request.form)
+    urlform = forms.UrlForm()
+    pasteform = forms.PasteForm()
     obj_count, obj_total_size = backend.count()
     log.info('object count %s' % obj_count)
 
@@ -129,7 +129,6 @@ def show_usage_api():
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
 def links_index():
-    request = flask.request
     urlform = forms.UrlForm()
     if urlform.validate_on_submit():
         key, url, created = backend.write(urlform.content.data, backend='show_link', truncate=16)
@@ -146,8 +145,10 @@ def links_index():
         return response
     else:
         log.warning('Form validation failed')
-        log.warning('urlform errors', error=urlform.errors)
-        flask.flash(pasteform.errors, 'danger')
+        for values in urlform.errors.values():
+            for value in values:
+                log.warning('urlform errors', error=value)
+                flask.flash(value, 'danger')
         return flask.render_template('post_links.html', urlform=urlform)
 
 
@@ -205,7 +206,6 @@ def show_link(pasted_id):
 @app.route('/pastes', methods=['POST', 'GET'])
 @decorators.templated()
 def pastes_index():
-    request = flask.request
     pasteform = forms.PasteForm()
     if pasteform.validate_on_submit():
         key, url, created = backend.write(pasteform.content.data, backend='show_paste')
@@ -223,8 +223,10 @@ def pastes_index():
         return response
     else:
         log.warning('Form validation failed')
-        log.warning('pasteform errors', error=pasteform.errors)
-        flask.flash(pasteform.errors, 'danger')
+        for values in pasteform.errors.values():
+            for value in values:
+                log.warning('urlform errors', error=value)
+                flask.flash(value, 'danger')
         return flask.render_template('post_pastes.html', pasteform=pasteform)
 
 

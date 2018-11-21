@@ -8,23 +8,4 @@
         url_for('links_index') + '/XXXXXX' }}</span></p>
 </div>
 
-{% if pasteform.content.errors %}
-{%   for error in pasteform.content.errors %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
-    <strong>{{ error }}</strong>
-</div>
-{%   endfor %}
-{% endif %}
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-{%   if messages %}
-{%     for category, message in messages %}
-<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-    <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
-    <strong>{{ message }}</strong>
-</div>
-{%     endfor %}
-{%   endif %}
-{% endwith %}
 {% endblock %}

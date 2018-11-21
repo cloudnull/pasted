@@ -19,13 +19,13 @@
         var twoToneButton = document.querySelector('.twoToneButton');
         twoToneButton.addEventListener("click", function() {
             twoToneButton.classList.add('running');
-            twoToneButton.innerHTML = "Working";
+            twoToneButton.innerHTML = 'Working <div class="ld ld-ring ld-spin"></div>';
           setTimeout(
               function  (){
                   twoToneButton.classList.remove('running');
-                  twoToneButton.setAttribute("style", "width: 200px;");
+                  twoToneButton.setAttribute("style", "width: 175px;");
                   twoToneButton.innerHTML = "Stalled, click to retry";
-              }, 24000);
+              }, 6000);
         }, false);
     });
   </script>

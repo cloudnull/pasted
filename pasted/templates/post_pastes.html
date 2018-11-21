@@ -6,9 +6,8 @@
         {{ pasteform.csrf_token }}
         {{ pasteform.content(class='input-box pasted-input-mh w-100') }}
         <span class="input-group-btn float-right">
-            <button id="content_paste" type="submit" class="btn btn-primary twoToneButton ld-ext-right"
-                style="width: 100px">Paste
-                <div class="ld ld-ring ld-spin"></div>
+            <button id="content_paste" name="submit" type="submit" class="btn btn-primary twoToneButton ld-ext-right">
+                Paste it!
             </button>
         </span>
         <small id="contentHelp" class="form-text text-muted">Enter a Text.</small>
@@ -38,13 +37,4 @@
         </div>
     </form>
 </div>
-
-{% if pasteform.content.errors %}
-{%   for error in pasteform.content.errors %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <span type="button" class="close" onclick="this.parentElement.style.display='none';">&times;</span>
-    <strong>{{ error }}</strong>
-</div>
-{%   endfor %}
-{% endif %}
 {% endblock %}
