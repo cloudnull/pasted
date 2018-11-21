@@ -9,8 +9,22 @@
             </div>
         </div>
         <div class="card-body">
-            <h5 class="border-bottom card-title w-100">It's as easy as copy and paste</h5>
-            <p class="card-text">Pasted can be used anywhere! In browsers, from the terminal (Linux, Windows, Macintosh),
+            <h5 class="border-bottom card-title w-100">Overview</h5>
+            <p class="card-text"></p>
+            <figure class="figure border-0 text-center float-left p-5">
+                <img src="{{ url_for('static', filename='img/pasted-diagram.png') }}" class="figure-img img-fluid rounded"
+                    alt="Pasted architecture diagram.">
+                <figcaption class="figure-caption">Pasted architecture diagram.</figcaption>
+            </figure>
+            <p>The power of pasted is really in it's simplicity. Content is hashed, cached, & placed on an object store
+                which is then sent a content delivery network. Once content becomes available on the Content Delivery
+                Network (CDN) the cache is expired and all future requests will be directed to the CDN edge node.</p>
+            <p>All objects are stored using the SHA1 of the provided content which ensures the risk of collisions is
+                extremely unlikely while. in the event duplicate content is uploaded to <a href="{{ url_for('index') }}">pasted.tech</a>,
+                the existing SHA1 will be immediate returned from the CDN giving the end-user a seamless experience.</p>
+            <h6 class="card-title">It's as easy as copy and paste</h6>
+            <p class="card-text">Pasted can be used anywhere! In browsers, from the terminal (Linux, Windows,
+                Macintosh),
                 just about anywhere work happens. The <a href="{{ url_for('show_usage_cli_client') }}">pasted client</a>
                 makes accessing the remote paste service super easy while the <a href="{{ url_for('show_usage_api') }}">API</a>
                 provides a robust way to connect to our offered services in unique and exciting ways.</p>
@@ -21,7 +35,8 @@
                 <li>Paste raw text, code, shell sessions, snippets, or whatever else you need. The pasted service will
                     present both raw output and syntax highlight options giving you the ability to share content in a
                     medium that is easy to understand for everyone.</li>
-                <li>Shorten links allowing you to create a simpler user experience when sharing complex web-based queries.
+                <li>Shorten links allowing you to create a simpler user experience when sharing complex web-based
+                    queries.
                     All shortened links allow users to reverse the shortener which allows folks to validate them.</li>
             </ul>
         </div>
@@ -30,7 +45,8 @@
             <ul>
                 <li>
                     <p><strong class="card-title">How long will my pastes last?</strong>
-                        <span>All pastes and shortened URLs will last indefinitely so long as their accessed within a 90
+                        <span>All pastes and shortened URLs will last indefinitely so long as their accessed within a
+                            90
                             period. Once a paste goes 90 days without access, it will be automatically removed.</span></p>
                 </li>
                 <li>
