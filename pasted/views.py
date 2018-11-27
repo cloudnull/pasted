@@ -26,6 +26,22 @@ def _add_headers(headers_obj):
     return headers_obj
 
 
+def _get_description(content, slice=48):
+    try:
+        content_slice = content.splitlines()[0]
+        if len(content_slice) == 0:
+            raise IndexError('Content has no value')
+        elif slice is None:
+            return 'Pasted-Content: {}'.format(content_slice)
+        elif len(content_slice) > slice:
+            return 'Pasted-Content: {} ...'.format(content_slice[:slice])
+        else:
+            return 'Pasted-Content: {}'.format(content_slice)
+    except Exception as e:
+        log.warning('Content parsing failed: %s' % e)
+        return 'Pasted-Object: Brought to you by pasted.tech'
+
+
 @app.route('/')
 @decorators.templated()
 def index():
@@ -111,19 +127,26 @@ def create_links():
 
 @app.route('/info/tos')
 def show_tos():
-    return flask.render_template('tos.html')
+    return flask.render_template(
+        'tos.html',
+        pasted_page_description='Pasted Terms of Service.'
+    )
 
 
 @app.route('/info/cli_client')
 def show_usage_cli_client():
-    return flask.render_template('usage_cli.html')
+    return flask.render_template(
+        'usage_cli.html',
+        pasted_page_description='Pasted CLI client information.'
+    )
 
 
 @app.route('/info/api')
 def show_usage_api():
     return flask.render_template(
         'usage_api.html',
-        api_doc=auto.generate()
+        api_doc=auto.generate(),
+        pasted_page_description='Pasted API information.'
     )
 
 @app.route('/links', methods=['POST', 'GET'])
@@ -149,7 +172,11 @@ def links_index():
             for value in values:
                 log.warning('urlform errors', error=value)
                 flask.flash(value, 'danger')
-        return flask.render_template('post_links.html', urlform=urlform)
+        return flask.render_template(
+            'post_links.html',
+            urlform=urlform,
+            pasted_page_description='Shorten links, make connections.'
+        )
 
 
 @app.route('/links/<pasted_id>')
@@ -165,6 +192,10 @@ def show_link_data(pasted_id):
                 remote_url=urlparse.urljoin(
                     request.url_root,
                     backend.local_url(pasted_id, backend='show_link')
+                ),
+                pasted_page_description=_get_description(
+                    content=content,
+                    slice=None
                 )
             )
         )
@@ -227,7 +258,11 @@ def pastes_index():
             for value in values:
                 log.warning('urlform errors', error=value)
                 flask.flash(value, 'danger')
-        return flask.render_template('post_pastes.html', pasteform=pasteform)
+        return flask.render_template(
+            'post_pastes.html',
+            pasteform=pasteform,
+            pasted_page_description='Create content, tell a story.'
+        )
 
 
 @app.route('/pastes/<pasted_id>')
@@ -241,6 +276,7 @@ def show_paste(pasted_id):
                 url=backend.local_url(pasted_id, backend='show_paste'),
                 content=content,
                 remote_url=request.url,
+                pasted_page_description=_get_description(content=content)
             )
         )
         response.headers = _add_headers(response.headers)
@@ -291,22 +327,38 @@ def robots():
 
 @app.errorhandler(404)
 def handle_not_found(error):
-    return flask.render_template('error_general.html', error=error), 404
+    return flask.render_template(
+        'error_general.html',
+        error=error,
+        pasted_page_description=_get_description(content=error)
+    ), 404
 
 
 @app.errorhandler(403)
 def handle_bad_request(error):
-    return flask.render_template('error_general.html', error=error), 403
+    return flask.render_template(
+        'error_general.html',
+        error=error,
+        pasted_page_description=_get_description(content=error)
+    ), 403
 
 
 @app.errorhandler(400)
 def handle_bad_request(error):
-    return flask.render_template('error_general.html', error=error), 400
+    return flask.render_template(
+        'error_general.html',
+        error=error,
+        pasted_page_description=_get_description(content=error)
+    ), 400
 
 
 @app.errorhandler(501)
 def handle_bad_request(error):
-    return flask.render_template('error_general.html', error=error), 501
+    return flask.render_template(
+        'error_general.html',
+        error=error,
+        pasted_page_description=_get_description(content=error)
+    ), 501
 
 
 @app.errorhandler(exceptions.BadRequest)
