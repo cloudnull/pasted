@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import urllib.parse as urlparse
 
 import flask
@@ -9,6 +10,7 @@ import requests
 from pasted import app
 from pasted import auto
 from pasted import backend
+from pasted import csrf
 from pasted import decorators
 from pasted import exceptions
 from pasted import forms
@@ -26,17 +28,17 @@ def _add_headers(headers_obj):
     return headers_obj
 
 
-def _get_description(content, slice=48):
+def _get_description(content, content_slice=48):
     try:
-        content_slice = content.splitlines()[0]
-        if len(content_slice) == 0:
+        first_line = content.splitlines()[0]
+        if len(first_line) == 0:
             raise IndexError('Content has no value')
         elif slice is None:
-            return 'Pasted-Content: {}'.format(content_slice)
-        elif len(content_slice) > slice:
-            return 'Pasted-Content: {} ...'.format(content_slice[:slice])
+            return 'Pasted-Content: {}'.format(first_line)
+        elif len(first_line) > content_slice:
+            return 'Pasted-Content: {} ...'.format(content_slice[:content_slice])
         else:
-            return 'Pasted-Content: {}'.format(content_slice)
+            return 'Pasted-Content: {}'.format(first_line)
     except Exception as e:
         log.warning('Content parsing failed: %s' % e)
         return 'Pasted-Object: Brought to you by pasted.tech'
@@ -45,7 +47,6 @@ def _get_description(content, slice=48):
 @app.route('/')
 @decorators.templated()
 def index():
-    request = flask.request
     urlform = forms.UrlForm()
     pasteform = forms.PasteForm()
     obj_count, obj_total_size = backend.count()
@@ -141,6 +142,14 @@ def show_usage_cli_client():
     )
 
 
+@app.route('/info/browser_plugin')
+def show_usage_browser_plugin():
+    return flask.render_template(
+        'usage_browser.html',
+        pasted_page_description='Pasted browser plugin information.'
+    )
+
+
 @app.route('/info/api')
 def show_usage_api():
     return flask.render_template(
@@ -148,6 +157,7 @@ def show_usage_api():
         api_doc=auto.generate(),
         pasted_page_description='Pasted API information.'
     )
+
 
 @app.route('/links', methods=['POST', 'GET'])
 @decorators.templated()
@@ -195,7 +205,7 @@ def show_link_data(pasted_id):
                 ),
                 pasted_page_description=_get_description(
                     content=content,
-                    slice=None
+                    content_slice=256
                 )
             )
         )
@@ -240,7 +250,6 @@ def pastes_index():
     pasteform = forms.PasteForm()
     if pasteform.validate_on_submit():
         key, url, created = backend.write(pasteform.content.data, backend='show_paste')
-
         if created:
             flask.flash('Paste created', 'success')
         else:
@@ -250,6 +259,9 @@ def pastes_index():
             flask.redirect(flask.url_for('show_paste', pasted_id=key))
         )
         response.headers['X-XSS-Protection'] = '0'
+        response.headers['X-RAW-Location'] = flask.url_for(
+            'show_paste_raw', pasted_id=key, _external=True
+        )
         response.headers = _add_headers(response.headers)
         return response
     else:

@@ -5,9 +5,11 @@ import os
 import flask
 
 from flask_selfdoc import Autodoc
-
+from flask_wtf.csrf import CSRFProtect
 
 app = flask.Flask(__name__, instance_relative_config=True)
+csrf = CSRFProtect(app)
+csrf.init_app(app)
 auto = Autodoc(app)
 
 

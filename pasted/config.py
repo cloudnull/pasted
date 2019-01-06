@@ -15,6 +15,7 @@ GOOGLE_ANALYTICS = None
 
 # if you don't override the secret key, one will be chosen for you
 SECRET_KEY = uuid.uuid4().hex
+WTF_CSRF_ENABLED = False
 
 # Options for OpenStack. Not all of these are required.
 OS_USERNAME = None

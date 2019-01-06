@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block body_content %}
+<div class="container">
+    <div class="container-fluid">
+        <div class="text-center">
+            <h4 class="display-4">Using a browser plugin</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="border-bottom card-title text-center w-100">Highlight text, pasted, get a link: share.</h5>
+            <p class="card-text"><a href="https://pasted.tech">Pasted.tech</a> has browser plugins which allow users to
+                simply <code>POST</code> content from within a browser to pasted with a single right click.</p>
+            <p class="card-text">The supported browser plugins leverage the <a href="{{ url_for('show_usage_api') }}">pasted
+                    API</a> to <strong>POST</strong> content and get return raw text <code>URLs</code>. All pasted
+                plugins are designed to rapidly upload content and get out of your way.</p>
+        </div>
+        <div class="row">
+            <!--Usage Overview Browser Plugin-->
+            <div class="card-body">
+                <h5 class="border-bottom card-title w-100">Supported browsers</h5>
+                <table style="width:100%">
+                    <tr>
+                        <th>Browser</th>
+                        <th>Link</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='img/chrome.gif') }}" alt="Chrome browser logo"
+                                style="width:30px;">
+                        </td>
+                        <td>
+                            <a href="https://pasted.tech/l/ab25f8ea0c61fb6e">Link to Browser Plugin</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='img/firefox.gif') }}" alt="Firefox browser logo"
+                                style="width:30px;">
+                        </td>
+                        <td>Coming soon.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="card-body">
+                <h5 class="border-bottom card-title w-100">The power is in the context menu</h5>
+                <figure class="figure text-center float-left p-5">
+                    <img src="{{ url_for('static', filename='img/using-plugin.jpg') }}" alt="Right click screen shot"
+                        style="max-width:640px;border-style:inset;border-radius:1px">
+                    <figcaption class="figure-caption">Right click screen shot</figcaption>
+                </figure>
+                <p class="card-text">Highlight content and right click on the content to bring up a context
+                    menu. Once the context menu is up click "Post to pasted.tech"</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="card-body">
+                <h5 class="border-bottom card-title w-100">Rich text is easy to share</h5>
+                <figure class="figure text-center float-left p-5">
+                    <img src="{{ url_for('static', filename='img/pastes.jpg') }}" alt="New tab opened" style="max-width:640px;border-style:outset;border-radius:1px">
+                    <figcaption class="figure-caption">New tab opened</figcaption>
+                </figure>
+                <p class="card-text">A new <strong>inactive</strong> tab will be opened with to the
+                    rich-text pasted document created after upload.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="card-body">
+                <h5 class="border-bottom card-title w-100">Raw text is simple</h5>
+                <figure class="figure text-center float-left p-5">
+                    <img src="{{ url_for('static', filename='img/notification.jpg') }}" alt="Showing notification"
+                        style="max-width:640px;border-style:inset;border-radius:1px">
+                    <figcaption class="figure-caption">Showing notification</figcaption>
+                </figure>
+                <p class="card-text">Once <strong>POST</strong>'d to pasted a notification will be displayed
+                    indicating the raw text <strong>URL</strong> has been added to the paste buffer (clipboard).</p>
+            </div>
+        </div>
+    </div>
+    <!-- ./Usage Overview Browser Plugin-->
+</div>
+{% endblock %}
